@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  Id          String    @id @unique @default(uuid())
+  Title       String
+  Description String
+  PostStatus  Int
+  CreatedById String
+  UpdatedById String?
+  CreatedBy   User      @relation("PostCreated", fields: [CreatedById], references: [Id])
+  UpdatedBy   User?     @relation("PostUpdated", fields: [UpdatedById], references: [Id])
+  CreatedAt   DateTime  @default(now())
+  UpdatedAt   DateTime? @updatedAt()
+}
+
+model User {
+  Id          String    @id @unique @default(uuid())
+  Name        String
+  Email       String
+  Password    String
+  PostCreated Post[]    @relation("PostCreated")
+  PostUpdated Post[]    @relation("PostUpdated")
+  CreatedAt   DateTime  @default(now())
+  UpdatedAt   DateTime? @updatedAt
+}
