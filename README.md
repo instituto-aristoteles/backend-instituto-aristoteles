@@ -22,7 +22,7 @@ O Instituto Aristóteles é uma organização sem fins lucrativos que, através 
    ```
 3. Rode a aplicação localmente, utilizando:
     ```bash
-    nest start
+    npm run start:dev
     ```
    
 Agora você pode acessar o site rodando localmente através do endereço: http://localhost:3333.
