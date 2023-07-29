@@ -25,7 +25,7 @@ O Instituto Aristóteles é uma organização sem fins lucrativos que, através 
     npm run start:dev
     ```
    
-Agora você pode acessar o site rodando localmente através do endereço: http://localhost:3333 ou por padrão é utilizada a porta 3000.
+Agora você pode acessar o site rodando localmente através do endereço: http://localhost:3333.
 
 
 ## Configurando o ESLint no VSCode
