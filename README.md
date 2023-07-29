@@ -30,7 +30,7 @@ Agora você pode acessar o site rodando localmente através do endereço: http:/
 
 ## Configurando o ESLint no VSCode
 
-ESLint é uma ferramenta para automatizar o padrão de código adotado para a aplicação. Ele aponta que estão fora do padrão, como ponto e virgula desnecessários, excesso de espaços em branco, variáveis não utilizadas e etc.
+ESLint é uma ferramenta para automatizar o padrão de código adotado para a aplicação. Ele aponta o que está fora do padrão, como ponto e virgula desnecessários, excesso de espaços em branco, variáveis não utilizadas e etc.
 
 Para que o VSCode avise quando o código não estiver de acordo com as regras do ESLint, você pode instalar uma extensão no VSCode chamada ESLint:
 https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
