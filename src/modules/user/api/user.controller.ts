@@ -33,6 +33,12 @@ export class UserController {
     await this.userService.createUser(user);
   }
 
+  @Post('login')
+  @HttpCode(200)
+  public async loginUser(@Body() {}): Promise<unknown> {
+    return {};
+  }
+
   @Put(':id')
   @HttpCode(200)
   public async updateUser(
