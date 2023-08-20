@@ -1,12 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserRepositoryInterface } from '../../../../domain/interfaces/user.repository.interface';
 import { UserReadDto } from '../dtos/user.read.dto';
-import { UserCreateUpdateDto } from '../dtos/user.create.update.dto';
-import {
-  dtoToModel,
-  modelToDTO,
-  modelToDtoList,
-} from '../../common/util/user-converter';
+import { CreateUserDto } from '../dtos/create-user.dto';
+
+import * as bcrypt from 'bcrypt';
 
 const Repository = () => Inject('UserRepository');
 
@@ -18,36 +15,34 @@ export class UserService {
 
   public async getUsers(): Promise<UserReadDto[]> {
     const users = await this.userRepository.getUsers();
-
-    return modelToDtoList(users);
+    return users.map((u) => {
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+      };
+    });
   }
 
   public async getUser(id: string): Promise<UserReadDto> {
     const user = await this.userRepository.getUser(id);
-    return modelToDTO(user);
+    return {
+      name: user.name,
+      email: user.email,
+    };
   }
 
-  public async updateUser(
-    id: string,
-    user: UserCreateUpdateDto,
-  ): Promise<void> {
-    let userDb = await this.userRepository.getUser(id);
-    if (!user) {
-      throw new Error('');
-    }
-
-    userDb = {
+  public async getUserByEmail(email: string): Promise<UserReadDto> {
+    const user = await this.userRepository.getUserByEmail(email);
+    return {
       ...user,
     };
-
-    await this.userRepository.updateUser(id, userDb);
   }
 
-  public async deleteUser(id: string): Promise<void> {
-    await this.userRepository.deleteUser(id);
-  }
-
-  public async createUser(user: UserCreateUpdateDto): Promise<void> {
-    await this.userRepository.createUser(dtoToModel(user));
+  public async createUser(user: CreateUserDto): Promise<void> {
+    await this.userRepository.createUser({
+      ...user,
+      password: await bcrypt.hash(user.password, 10),
+    });
   }
 }

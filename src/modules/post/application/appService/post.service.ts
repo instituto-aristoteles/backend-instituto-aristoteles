@@ -35,7 +35,7 @@ export class PostService {
     id: string,
     post: PostCreateUpdateDTO,
   ): Promise<void> {
-    let postEntity: PostEntity = await this.postRepository.getPost(id);
+    const postEntity: PostEntity = await this.postRepository.getPost(id);
     if (!postEntity) {
       throw new Error('Post not found.');
     }
@@ -47,11 +47,10 @@ export class PostService {
       throw new Error('User not found.');
     }
 
-    postEntity = {
-      ...post,
-      UpdatedBy: userEntity,
-    };
-    await this.postRepository.updatePost(id, postEntity);
+    await this.postRepository.updatePost(id, {
+      ...postEntity,
+      updatedby: userEntity,
+    });
   }
 
   public async createPost(post: PostCreateUpdateDTO): Promise<void> {

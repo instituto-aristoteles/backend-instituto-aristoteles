@@ -10,27 +10,27 @@ export class PostRepository implements PostRepositoryInterface {
   async createPost(postEntity: PostEntity): Promise<void> {
     await this.repository.post.create({
       data: {
-        Title: postEntity.Title,
-        Description: postEntity.Description,
-        PostStatus: postEntity.PostStatus,
-        CreatedById: postEntity.CreatedById,
-        UpdatedById: postEntity.UpdatedById,
+        title: postEntity.title,
+        description: postEntity.description,
+        poststatus: postEntity.poststatus,
+        createdbyid: postEntity.createdbyid,
+        updatedbyid: postEntity.updatedbyid,
       },
     });
   }
 
   async deletePost(id: string): Promise<void> {
     await this.repository.post.delete({
-      where: { Id: id },
+      where: { id: id },
     });
   }
 
   async getPost(id: string): Promise<PostEntity> {
     return this.repository.post.findUnique({
-      where: { Id: id },
+      where: { id: id },
       include: {
-        CreatedBy: true,
-        UpdatedBy: true,
+        createdby: true,
+        updatedby: true,
       },
     });
   }
@@ -38,8 +38,8 @@ export class PostRepository implements PostRepositoryInterface {
   async getPosts(): Promise<PostEntity[]> {
     return this.repository.post.findMany({
       include: {
-        CreatedBy: true,
-        UpdatedBy: true,
+        createdby: true,
+        updatedby: true,
       },
     });
   }
@@ -47,13 +47,13 @@ export class PostRepository implements PostRepositoryInterface {
   async updatePost(id: string, postEntity: PostEntity): Promise<void> {
     await this.repository.post.update({
       where: {
-        Id: id,
+        id: id,
       },
       data: {
-        Title: postEntity.Title,
-        Description: postEntity.Description,
-        PostStatus: postEntity.PostStatus,
-        UpdatedById: postEntity.UpdatedById,
+        title: postEntity.title,
+        description: postEntity.description,
+        poststatus: postEntity.poststatus,
+        updatedbyid: postEntity.updatedbyid,
       },
     });
   }

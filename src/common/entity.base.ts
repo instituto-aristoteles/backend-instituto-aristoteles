@@ -1,5 +1,5 @@
 export class EntityBase {
-  Id?: string;
-  CreatedAt: Date;
-  UpdatedAt?: Date;
+  id?: string;
+  createdat: Date;
+  updatedat?: Date;
 }

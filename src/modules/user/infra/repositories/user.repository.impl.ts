@@ -6,22 +6,23 @@ import { PrismaService } from '../../../../database/prisma/service/prisma.servic
 @Injectable()
 export class UserRepository implements UserRepositoryInterface {
   constructor(private readonly repository: PrismaService) {}
+
   async createUser(entity: UserEntity): Promise<void> {
-    this.repository.user.create({
+    await this.repository.user.create({
       data: entity,
     });
   }
 
   async deleteUser(id: string): Promise<void> {
-    this.repository.user.delete({
-      where: { Id: id },
+    await this.repository.user.delete({
+      where: { id: id },
     });
   }
 
   async getUser(id: string): Promise<UserEntity> {
     return this.repository.user.findUnique({
       where: {
-        Id: id,
+        id: id,
       },
     });
   }
@@ -33,9 +34,17 @@ export class UserRepository implements UserRepositoryInterface {
   async updateUser(id: string, entity: UserEntity): Promise<void> {
     this.repository.user.update({
       where: {
-        Id: id,
+        id: id,
       },
       data: entity,
+    });
+  }
+
+  async getUserByEmail(email: string): Promise<UserEntity> {
+    return this.repository.user.findUnique({
+      where: {
+        email,
+      },
     });
   }
 }
