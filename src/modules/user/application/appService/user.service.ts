@@ -32,13 +32,6 @@ export class UserService {
     };
   }
 
-  public async getUserByEmail(email: string): Promise<UserReadDto> {
-    const user = await this.userRepository.getUserByEmail(email);
-    return {
-      ...user,
-    };
-  }
-
   public async createUser(user: CreateUserDto): Promise<void> {
     await this.userRepository.createUser({
       ...user,
