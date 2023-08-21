@@ -11,16 +11,20 @@ import {
 import { PostService } from '../application/appService/post.service';
 import { PostCreateUpdateDTO } from '../application/dtos/post.create.update.dto';
 import { PostReadDTO } from '../application/dtos/post.read.dto';
+import { IsPublic } from '../../auth/domain/decorators/is-public.decorator';
 
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
+
+  @IsPublic()
   @Get()
   @HttpCode(200)
   public async getPosts(): Promise<PostReadDTO[]> {
     return this.postService.getPosts();
   }
 
+  @IsPublic()
   @Get(':id')
   @HttpCode(200)
   public async getPost(@Param('id') id: string): Promise<PostReadDTO> {

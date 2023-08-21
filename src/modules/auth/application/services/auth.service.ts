@@ -6,7 +6,7 @@ import { UserToken } from '../models/user-token';
 import { UserPayload } from '../models/user-payload';
 
 import * as bcrypt from 'bcrypt';
-import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
+import { UnauthorizedError } from '../../../../domain/exceptions/unauthorized.error';
 const UserRepository = () => Inject('UserRepository');
 @Injectable()
 export class AuthService {

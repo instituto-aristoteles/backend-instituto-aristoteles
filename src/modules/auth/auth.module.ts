@@ -8,10 +8,18 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'process';
 import { LoginValidationMiddleware } from './api/middlewares/login-validation.middleware';
+import { JwtStrategy } from './domain/strategies/jwt.strategy';
+import { LocalStrategy } from './domain/strategies/local.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, UserRepositoryProvider, PrismaService],
+  providers: [
+    AuthService,
+    UserRepositoryProvider,
+    PrismaService,
+    LocalStrategy,
+    JwtStrategy,
+  ],
   imports: [
     UserModule,
     PassportModule,
