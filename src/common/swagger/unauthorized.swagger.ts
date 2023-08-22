@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserReadDto {
+export class UnauthorizedSwagger {
   @ApiProperty()
-  id?: string;
+  statusCode: number;
 
   @ApiProperty()
-  name: string;
+  message: string;
 
   @ApiProperty()
-  email: string;
+  error: string;
 }

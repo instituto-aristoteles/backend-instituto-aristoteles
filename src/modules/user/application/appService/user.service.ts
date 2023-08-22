@@ -39,15 +39,4 @@ export class UserService {
       password: await bcrypt.hash(user.password, 10),
     });
   }
-
-  public async getUserByToken(): Promise<UserReadDto> {
-    const user = await this.userRepository.getUserByEmail('');
-    if (!user) {
-      throw new NotFoundError('The user informed in the token does not exist');
-    }
-
-    return {
-      ...user,
-    };
-  }
 }

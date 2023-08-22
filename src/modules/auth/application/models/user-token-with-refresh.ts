@@ -1,3 +1,10 @@
 import { UserToken } from './user-token';
+import { ApiProperty } from '@nestjs/swagger';
 
-export type UserTokenWithRefresh = UserToken & { refreshToken: string };
+export class UserTokenWithRefresh implements UserToken {
+  @ApiProperty()
+  refreshToken: string;
+
+  @ApiProperty()
+  access_token: string;
+}

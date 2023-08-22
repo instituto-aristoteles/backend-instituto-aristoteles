@@ -14,14 +14,29 @@ import { RefreshTokenAuthGuard } from '../../../common/guards/refresh-token-auth
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { UserEntity } from '../../../domain/entities/user.entity';
 import { User } from '@prisma/client';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
+import { UserTokenWithRefresh } from '../application/models/user-token-with-refresh';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @IsPublic()
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiOperation({ summary: 'Login com usuário e senha' })
+  @ApiResponse({
+    status: 200,
+    description: 'Logado com sucesso',
+    type: UserTokenWithRefresh,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Email e/ou senha incorretos',
+    type: UnauthorizedSwagger,
+  })
   @HttpCode(HttpStatus.OK)
   async login(@Request() req: AuthRequest) {
     return await this.authService.login(req.user);
@@ -30,6 +45,17 @@ export class AuthController {
   @IsPublic()
   @UseGuards(RefreshTokenAuthGuard)
   @Post('refresh')
+  @ApiOperation({ summary: 'Atualizar o refresh token vinculado ao usuário' })
+  @ApiResponse({
+    status: 200,
+    description: 'Refresh token retornado',
+    type: UserTokenWithRefresh,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre caso não esteja logado com seu email e senha',
+    type: UnauthorizedSwagger,
+  })
   @HttpCode(HttpStatus.OK)
   async refreshToken(@CurrentUser('refreshToken') user: UserEntity) {
     return await this.authService.refreshTokens(user as User);
