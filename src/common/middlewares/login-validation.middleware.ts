@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
-import { LoginRequestBody } from '../../application/models/login-request-body';
+import { LoginRequestBody } from '../../modules/auth/application/models/login-request-body';
 
 @Injectable()
 export class LoginValidationMiddleware implements NestMiddleware {

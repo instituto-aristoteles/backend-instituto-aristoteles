@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { UserService } from '../application/appService/user.service';
 import { CreateUserDto } from '../application/dtos/create-user.dto';
 import { UserReadDto } from '../application/dtos/user.read.dto';
-import { CurrentUser } from '../../auth/domain/decorators/current-user.decorator';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { UserEntity } from '../../../domain/entities/user.entity';
 
 @Controller('user')

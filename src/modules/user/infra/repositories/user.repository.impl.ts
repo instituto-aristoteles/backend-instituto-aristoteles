@@ -47,4 +47,15 @@ export class UserRepository implements UserRepositoryInterface {
       },
     });
   }
+
+  async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
+    this.repository.user.update({
+      where: {
+        id,
+      },
+      data: {
+        refreshToken,
+      },
+    });
+  }
 }

@@ -11,7 +11,7 @@ import {
 import { PostService } from '../application/appService/post.service';
 import { PostCreateUpdateDTO } from '../application/dtos/post.create.update.dto';
 import { PostReadDTO } from '../application/dtos/post.read.dto';
-import { IsPublic } from '../../auth/domain/decorators/is-public.decorator';
+import { IsPublic } from '../../../common/decorators/is-public.decorator';
 
 @Controller('post')
 export class PostController {

@@ -1,5 +1,5 @@
 import { PostStatusEnum } from '../enums/post-status.enum';
-import { EntityBase } from '../../common/entity.base';
+import { EntityBase } from '../../common/base/entity.base';
 import { UserEntity } from './user.entity';
 
 export class PostEntity extends EntityBase {

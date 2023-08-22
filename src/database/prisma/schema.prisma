@@ -21,12 +21,13 @@ model Post {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  name        String
-  email       String    @unique
-  password    String
-  postcreated Post[]    @relation("postcreated")
-  postupdated Post[]    @relation("postupdated")
-  createdat   DateTime  @default(now())
-  updatedat   DateTime? @updatedAt
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  password     String
+  refreshToken String
+  postcreated  Post[]    @relation("postcreated")
+  postupdated  Post[]    @relation("postupdated")
+  createdat    DateTime  @default(now())
+  updatedat    DateTime? @updatedAt
 }

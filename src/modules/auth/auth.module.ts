@@ -7,9 +7,10 @@ import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'process';
-import { LoginValidationMiddleware } from './api/middlewares/login-validation.middleware';
-import { JwtStrategy } from './domain/strategies/jwt.strategy';
-import { LocalStrategy } from './domain/strategies/local.strategy';
+import { LoginValidationMiddleware } from '../../common/middlewares/login-validation.middleware';
+import { JwtStrategy } from '../../common/strategies/jwt.strategy';
+import { LocalStrategy } from '../../common/strategies/local.strategy';
+import { JwtRefreshTokenStrategy } from '../../common/strategies/jwt-refresh-token.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -19,6 +20,7 @@ import { LocalStrategy } from './domain/strategies/local.strategy';
     PrismaService,
     LocalStrategy,
     JwtStrategy,
+    JwtRefreshTokenStrategy,
   ],
   imports: [
     UserModule,
@@ -33,6 +35,6 @@ import { LocalStrategy } from './domain/strategies/local.strategy';
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoginValidationMiddleware).forRoutes('login');
+    consumer.apply(LoginValidationMiddleware).forRoutes('auth/login');
   }
 }
