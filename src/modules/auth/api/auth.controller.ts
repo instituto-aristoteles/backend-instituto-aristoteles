@@ -57,7 +57,7 @@ export class AuthController {
     type: UnauthorizedSwagger,
   })
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@CurrentUser('refreshToken') user: UserEntity) {
-    return await this.authService.refreshTokens(user as User);
+  async refreshToken(@CurrentUser() user: User) {
+    return await this.authService.refreshTokens(user);
   }
 }

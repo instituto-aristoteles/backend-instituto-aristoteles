@@ -7,6 +7,7 @@ import { UserEntity } from '../../../domain/entities/user.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
+import { IsPublic } from '../../../common/decorators/is-public.decorator';
 
 @Controller('user')
 @ApiTags('user')
@@ -24,7 +25,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar um artigo sem estar logado',
+    description: 'Ocorre ao tentar listar os usuários sem estar logado',
   })
   public async getUsers(): Promise<UserReadDto[]> {
     return this.userService.getUsers();
@@ -45,7 +46,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar um artigo sem estar logado',
+    description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
   public async getUser(@Param('id') id: string): Promise<UserReadDto> {
@@ -62,7 +63,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar um artigo sem estar logado',
+    description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
   public async getCurrentUser(
@@ -71,6 +72,7 @@ export class UserController {
     return user;
   }
 
+  @IsPublic()
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Cria um usuário' })
@@ -80,7 +82,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar um artigo sem estar logado',
+    description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
   public async createUser(@Body() user: CreateUserDto): Promise<void> {

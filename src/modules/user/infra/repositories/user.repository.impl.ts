@@ -32,7 +32,7 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async updateUser(id: string, entity: UserEntity): Promise<void> {
-    this.repository.user.update({
+    await this.repository.user.update({
       where: {
         id: id,
       },
@@ -49,12 +49,12 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
-    this.repository.user.update({
+    await this.repository.user.update({
       where: {
-        id,
+        id: id,
       },
       data: {
-        refreshToken,
+        refreshToken: refreshToken,
       },
     });
   }

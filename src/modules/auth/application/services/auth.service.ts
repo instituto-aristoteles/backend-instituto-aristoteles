@@ -54,9 +54,10 @@ export class AuthService {
     if (!userDb) throw new ForbiddenException('Access denied');
 
     const isPasswordValid = await bcrypt.compare(
-      userDb.refreshToken,
       user.refreshToken,
+      userDb.refreshToken,
     );
+
     if (!isPasswordValid) throw new ForbiddenException('Access denied');
     const tokens = await this.getTokens(userDb as User);
     await this.updateRefreshToken(userDb.id, tokens.refreshToken);
