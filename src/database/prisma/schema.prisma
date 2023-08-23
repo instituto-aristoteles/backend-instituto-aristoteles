@@ -8,25 +8,26 @@ datasource db {
 }
 
 model Post {
-  Id          String    @id @unique @default(uuid())
-  Title       String
-  Description String
-  PostStatus  Int
-  CreatedById String
-  UpdatedById String?
-  CreatedBy   User      @relation("PostCreated", fields: [CreatedById], references: [Id])
-  UpdatedBy   User?     @relation("PostUpdated", fields: [UpdatedById], references: [Id])
-  CreatedAt   DateTime  @default(now())
-  UpdatedAt   DateTime? @updatedAt()
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  poststatus  Int
+  createdbyid String
+  updatedbyid String?
+  createdby   User      @relation("postcreated", fields: [createdbyid], references: [id])
+  updatedby   User?     @relation("postupdated", fields: [updatedbyid], references: [id])
+  createdat   DateTime  @default(now())
+  updatedat   DateTime? @updatedAt()
 }
 
 model User {
-  Id          String    @id @unique @default(uuid())
-  Name        String
-  Email       String
-  Password    String
-  PostCreated Post[]    @relation("PostCreated")
-  PostUpdated Post[]    @relation("PostUpdated")
-  CreatedAt   DateTime  @default(now())
-  UpdatedAt   DateTime? @updatedAt
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  password     String
+  refreshToken String?
+  postcreated  Post[]    @relation("postcreated")
+  postupdated  Post[]    @relation("postupdated")
+  createdat    DateTime  @default(now())
+  updatedat    DateTime? @updatedAt
 }

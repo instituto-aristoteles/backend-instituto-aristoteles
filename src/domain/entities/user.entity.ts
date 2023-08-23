@@ -1,7 +1,8 @@
-import { EntityBase } from '../../common/entity.base';
+import { EntityBase } from '../../common/base/entity.base';
 
 export class UserEntity extends EntityBase {
-  Name: string;
-  Email: string;
-  Password: string;
+  name: string;
+  email: string;
+  password: string;
+  refreshToken: string;
 }
