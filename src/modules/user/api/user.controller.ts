@@ -9,8 +9,8 @@ import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagge
 import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
 import { IsPublic } from '../../../common/decorators/is-public.decorator';
 
-@Controller('user')
-@ApiTags('user')
+@Controller('users')
+@ApiTags('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

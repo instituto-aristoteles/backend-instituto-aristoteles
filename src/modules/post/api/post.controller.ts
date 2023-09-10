@@ -16,8 +16,8 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
 
-@Controller('post')
-@ApiTags('post')
+@Controller('posts')
+@ApiTags('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 

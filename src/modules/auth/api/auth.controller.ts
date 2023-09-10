@@ -12,7 +12,6 @@ import { AuthRequest } from '../application/models/auth-request';
 import { LocalAuthGuard } from '../../../common/guards/local-auth.guard';
 import { RefreshTokenAuthGuard } from '../../../common/guards/refresh-token-auth.guard';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import { UserEntity } from '../../../domain/entities/user.entity';
 import { User } from '@prisma/client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
