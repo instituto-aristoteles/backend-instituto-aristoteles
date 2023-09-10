@@ -12,7 +12,12 @@ import { PostService } from '../application/appService/post.service';
 import { PostCreateUpdateDTO } from '../application/dtos/post.create.update.dto';
 import { PostReadDTO } from '../application/dtos/post.read.dto';
 import { IsPublic } from '../../../common/decorators/is-public.decorator';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
 
@@ -65,6 +70,7 @@ export class PostController {
     description: 'Ocorre ao tentar criar um artigo sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiBearerAuth()
   public async createPost(@Body() post: PostCreateUpdateDTO): Promise<void> {
     await this.postService.createPost(post);
   }
@@ -81,6 +87,7 @@ export class PostController {
     description: 'Ocorre ao tentar criar um artigo sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiBearerAuth()
   public async updatePost(
     @Param('id') id: string,
     @Body() post: PostCreateUpdateDTO,
@@ -100,6 +107,7 @@ export class PostController {
     description: 'Ocorre ao tentar criar um artigo sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiBearerAuth()
   public async deletePost(@Param('id') id: string): Promise<void> {
     await this.postService.deletePost(id);
   }
