@@ -13,9 +13,10 @@ import { LocalAuthGuard } from '../../../common/guards/local-auth.guard';
 import { RefreshTokenAuthGuard } from '../../../common/guards/refresh-token-auth.guard';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { User } from '@prisma/client';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
 import { UserTokenWithRefresh } from '../application/models/user-token-with-refresh';
+import { LoginRequestBody } from '../application/models/login-request-body';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -36,6 +37,7 @@ export class AuthController {
     description: 'Email e/ou senha incorretos',
     type: UnauthorizedSwagger,
   })
+  @ApiBody({ type: LoginRequestBody })
   @HttpCode(HttpStatus.OK)
   async login(@Request() req: AuthRequest) {
     return await this.authService.login(req.user);

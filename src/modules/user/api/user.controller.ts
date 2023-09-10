@@ -4,7 +4,12 @@ import { CreateUserDto } from '../application/dtos/create-user.dto';
 import { UserReadDto } from '../application/dtos/user.read.dto';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { UserEntity } from '../../../domain/entities/user.entity';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
 import { IsPublic } from '../../../common/decorators/is-public.decorator';
@@ -27,6 +32,7 @@ export class UserController {
     status: 401,
     description: 'Ocorre ao tentar listar os usuários sem estar logado',
   })
+  @ApiBearerAuth()
   public async getUsers(): Promise<UserReadDto[]> {
     return this.userService.getUsers();
   }
@@ -49,6 +55,7 @@ export class UserController {
     description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiBearerAuth()
   public async getUser(@Param('id') id: string): Promise<UserReadDto> {
     return this.userService.getUser(id);
   }
@@ -66,6 +73,7 @@ export class UserController {
     description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiBearerAuth()
   public async getCurrentUser(
     @CurrentUser() user: UserEntity,
   ): Promise<UserReadDto> {
@@ -85,6 +93,7 @@ export class UserController {
     description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiBearerAuth()
   public async createUser(@Body() user: CreateUserDto): Promise<void> {
     await this.userService.createUser(user);
   }
