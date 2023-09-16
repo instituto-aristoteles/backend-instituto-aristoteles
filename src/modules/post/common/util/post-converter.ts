@@ -7,7 +7,7 @@ export function modelToDTO(entity: PostEntity): PostReadDTO {
     Id: entity.id,
     Title: entity.title,
     Description: entity.description,
-    PostStatus: entity.poststatus,
+    PostStatus: entity.status,
     CreatedBy: entity.createdby,
     UpdatedBy: entity.updatedby,
     CreatedAt: entity.createdat,
@@ -28,7 +28,7 @@ export function dtoToModel(dto: PostCreateUpdateDTO): PostEntity {
     createdbyid: dto.CreatedById,
     title: dto.Title,
     description: dto.Description,
-    poststatus: dto.PostStatus,
+    status: dto.PostStatus,
     createdat: dto.CreatedAt,
     updatedat: dto.UpdatedAt,
   };
