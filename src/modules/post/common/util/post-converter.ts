@@ -4,14 +4,14 @@ import { PostEntity } from '../../../../domain/entities/post.entity';
 
 export function modelToDTO(entity: PostEntity): PostReadDTO {
   return {
-    Id: entity.id,
-    Title: entity.title,
-    Description: entity.description,
-    PostStatus: entity.status,
-    CreatedBy: entity.createdby,
-    UpdatedBy: entity.updatedby,
-    CreatedAt: entity.createdat,
-    UpdatedAt: entity.updatedat,
+    id: entity.id,
+    title: entity.title,
+    description: entity.description,
+    status: entity.status,
+    createdBy: entity.createdby,
+    updatedBy: entity.updatedby,
+    createdAt: entity.createdat,
+    updatedAt: entity.updatedat,
   };
 }
 
@@ -25,11 +25,13 @@ export function modelToDtoList(entityList: PostEntity[]): PostReadDTO[] {
 export function dtoToModel(dto: PostCreateUpdateDTO): PostEntity {
   return {
     createdby: undefined,
-    createdbyid: dto.CreatedById,
-    title: dto.Title,
-    description: dto.Description,
-    status: dto.PostStatus,
-    createdat: dto.CreatedAt,
-    updatedat: dto.UpdatedAt,
+    createdbyid: dto.createdById,
+    title: dto.title,
+    description: dto.description,
+    slug: dto.slug,
+    coverUrl: dto.coverUrl,
+    status: dto.status,
+    createdat: dto.createdAt,
+    updatedat: dto.updatedAt,
   };
 }

@@ -2,28 +2,34 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class PostCreateUpdateDTO {
   @ApiProperty()
-  Title: string;
+  title: string;
 
   @ApiProperty()
-  Description: string;
+  description: string;
 
   @ApiProperty()
-  PostStatus: number;
+  slug: string;
 
   @ApiProperty()
-  CreatedById: string;
+  coverUrl: string;
+
+  @ApiProperty()
+  status: number;
+
+  @ApiProperty()
+  createdById: string;
 
   @ApiProperty({
     nullable: true,
   })
-  UpdatedById?: string;
+  updatedById?: string;
 
   @ApiProperty()
-  CreatedAt: Date;
+  createdAt: Date;
 
   @ApiProperty({
     nullable: true,
   })
   @ApiProperty()
-  UpdatedAt?: Date;
+  updatedAt?: Date;
 }

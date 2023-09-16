@@ -3,26 +3,26 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class PostReadDTO {
   @ApiProperty()
-  Id: string;
+  id: string;
 
   @ApiProperty()
-  Title: string;
+  title: string;
 
   @ApiProperty()
-  Description: string;
+  description: string;
 
   @ApiProperty()
-  PostStatus: number;
+  status: number;
 
   @ApiProperty()
-  CreatedBy: UserReadDto;
+  createdBy: UserReadDto;
 
   @ApiProperty()
-  UpdatedBy?: UserReadDto;
+  updatedBy?: UserReadDto;
 
   @ApiProperty()
-  CreatedAt: Date;
+  createdAt: Date;
 
   @ApiProperty()
-  UpdatedAt?: Date;
+  updatedAt?: Date;
 }
