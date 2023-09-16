@@ -41,7 +41,7 @@ export class PostService {
     }
 
     const userEntity: UserEntity = await this.userRepository.getUser(
-      post.UpdatedById,
+      post.updatedById,
     );
     if (!userEntity) {
       throw new Error('User not found.');
@@ -54,7 +54,7 @@ export class PostService {
   }
 
   public async createPost(post: PostCreateUpdateDTO): Promise<void> {
-    if (!post.CreatedById) {
+    if (!post.createdById) {
       throw new Error(
         'Its mandatory the post to contain a user who is creating.',
       );

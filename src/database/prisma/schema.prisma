@@ -10,8 +10,10 @@ datasource db {
 model Post {
   id          String    @id @default(uuid())
   title       String
+  slug        String    @unique(sort: Desc)
+  coverUrl    String?
   description String
-  status  Int
+  status      Int
   createdbyid String
   updatedbyid String?
   createdby   User      @relation("postcreated", fields: [createdbyid], references: [id])

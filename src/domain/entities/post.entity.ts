@@ -5,6 +5,8 @@ import { UserEntity } from './user.entity';
 export class PostEntity extends EntityBase {
   title: string;
   description: string;
+  slug: string;
+  coverUrl?: string;
   status: PostStatusEnum;
   createdbyid: string;
   updatedbyid?: string;

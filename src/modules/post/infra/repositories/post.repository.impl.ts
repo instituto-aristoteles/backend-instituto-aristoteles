@@ -12,6 +12,8 @@ export class PostRepository implements PostRepositoryInterface {
       data: {
         title: postEntity.title,
         description: postEntity.description,
+        slug: postEntity.slug,
+        coverUrl: postEntity.coverUrl,
         status: postEntity.status,
         createdbyid: postEntity.createdbyid,
         updatedbyid: postEntity.updatedbyid,
