@@ -12,7 +12,7 @@ export class PostRepository implements PostRepositoryInterface {
       data: {
         title: postEntity.title,
         description: postEntity.description,
-        poststatus: postEntity.poststatus,
+        status: postEntity.status,
         createdbyid: postEntity.createdbyid,
         updatedbyid: postEntity.updatedbyid,
       },
@@ -52,7 +52,7 @@ export class PostRepository implements PostRepositoryInterface {
       data: {
         title: postEntity.title,
         description: postEntity.description,
-        poststatus: postEntity.poststatus,
+        status: postEntity.status,
         updatedbyid: postEntity.updatedbyid,
       },
     });

@@ -11,7 +11,7 @@ model Post {
   id          String    @id @default(uuid())
   title       String
   description String
-  poststatus  Int
+  status  Int
   createdbyid String
   updatedbyid String?
   createdby   User      @relation("postcreated", fields: [createdbyid], references: [id])
