@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
-import { PostController } from './api/post.controller';
-import { PostService } from './application/appService/post.service';
-import { PostRepositoryProvider } from './infra/providers/post-repository.provider';
-import { PrismaService } from '../../database/prisma/service/prisma.service';
-import { UserRepositoryProvider } from '../user/infra/providers/user.repository.provider';
+import { PostController } from '@/modules/post/api/post.controller';
+import { PostService } from '@/modules/post/application/appService/post.service';
+import { PrismaService } from '@/database/prisma/service/prisma.service';
+import { PostRepository } from '@/modules/post/repositories/post.repository';
+import { UserRepository } from '@/modules/user/infra/repositories/user.repository.impl';
+import { CategoryRepository } from '@/modules/category/infra/repositories/category.repository.impl';
 
 @Module({
   controllers: [PostController],
   providers: [
-    PostRepositoryProvider,
-    UserRepositoryProvider,
+    PostRepository,
+    UserRepository,
+    CategoryRepository,
     PostService,
     PrismaService,
   ],

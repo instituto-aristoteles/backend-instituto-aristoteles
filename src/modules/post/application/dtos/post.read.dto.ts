@@ -1,6 +1,6 @@
-import { UserReadDto } from '../../../user/application/dtos/user.read.dto';
+import { UserReadDto } from '@/modules/user/application/dtos/user.read.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { ReadCategoryDto } from '../../../category/application/dtos/read-category.dto';
+import { ReadCategoryDto } from '@/modules/category/application/dtos/read-category.dto';
 
 export class PostReadDTO {
   @ApiProperty()
@@ -13,13 +13,16 @@ export class PostReadDTO {
   description: string;
 
   @ApiProperty()
+  content: string;
+
+  @ApiProperty()
   status: number;
 
   @ApiProperty()
-  createdBy: UserReadDto;
+  createdBy: Pick<UserReadDto, 'id' | 'name' | 'email'>;
 
   @ApiProperty()
-  updatedBy?: UserReadDto;
+  updatedBy?: Pick<UserReadDto, 'id' | 'name' | 'email'>;
 
   @ApiProperty()
   category?: ReadCategoryDto;
