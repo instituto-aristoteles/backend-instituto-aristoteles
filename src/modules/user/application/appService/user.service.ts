@@ -4,7 +4,6 @@ import { UserReadDto } from '../dtos/user.read.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
 
 import * as bcrypt from 'bcrypt';
-import { NotFoundError } from 'src/domain/exceptions/not-found.error';
 
 const Repository = () => Inject('UserRepository');
 

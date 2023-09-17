@@ -8,10 +8,10 @@ export function modelToDTO(entity: PostEntity): PostReadDTO {
     title: entity.title,
     description: entity.description,
     status: entity.status,
-    createdBy: entity.createdby,
-    updatedBy: entity.updatedby,
-    createdAt: entity.createdat,
-    updatedAt: entity.updatedat,
+    createdBy: entity.createdBy,
+    updatedBy: entity.updatedBy,
+    createdAt: entity.createdAt,
+    updatedAt: entity.updatedAt,
   };
 }
 
@@ -24,14 +24,14 @@ export function modelToDtoList(entityList: PostEntity[]): PostReadDTO[] {
 
 export function dtoToModel(dto: PostCreateUpdateDTO): PostEntity {
   return {
-    createdby: undefined,
-    createdbyid: dto.createdById,
+    createdBy: undefined,
+    createdById: dto.createdById,
     title: dto.title,
     description: dto.description,
     slug: dto.slug,
     coverUrl: dto.coverUrl,
     status: dto.status,
-    createdat: dto.createdAt,
-    updatedat: dto.updatedAt,
+    createdAt: dto.createdAt,
+    updatedAt: dto.updatedAt,
   };
 }

@@ -30,6 +30,5 @@ export class PostCreateUpdateDTO {
   @ApiProperty({
     nullable: true,
   })
-  @ApiProperty()
   updatedAt?: Date;
 }

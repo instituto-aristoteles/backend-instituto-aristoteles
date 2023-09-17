@@ -28,6 +28,8 @@ export class PostService {
 
   public async getPost(id: string): Promise<PostReadDTO> {
     const post = await this.postRepository.getPost(id);
+    if (!post) return null;
+
     return modelToDTO(post);
   }
 
@@ -49,7 +51,7 @@ export class PostService {
 
     await this.postRepository.updatePost(id, {
       ...postEntity,
-      updatedby: userEntity,
+      updatedBy: userEntity,
     });
   }
 

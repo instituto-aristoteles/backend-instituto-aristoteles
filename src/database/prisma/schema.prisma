@@ -14,12 +14,14 @@ model Post {
   coverUrl    String?
   description String
   status      Int
-  createdbyid String
-  updatedbyid String?
-  createdby   User      @relation("postcreated", fields: [createdbyid], references: [id])
-  updatedby   User?     @relation("postupdated", fields: [updatedbyid], references: [id])
-  createdat   DateTime  @default(now())
-  updatedat   DateTime? @updatedAt()
+  category    Category? @relation(fields: [categoryId], references: [id])
+  createdById String
+  updatedById String?
+  createdBy   User      @relation("postCreated", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("postUpdated", fields: [updatedById], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt()
+  categoryId  String?
 }
 
 model User {
@@ -28,8 +30,17 @@ model User {
   email        String    @unique
   password     String
   refreshToken String?
-  postcreated  Post[]    @relation("postcreated")
-  postupdated  Post[]    @relation("postupdated")
-  createdat    DateTime  @default(now())
-  updatedat    DateTime? @updatedAt
+  postCreated  Post[]    @relation("postCreated")
+  postUpdated  Post[]    @relation("postUpdated")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  title     String
+  slug      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  Post      Post[]
 }

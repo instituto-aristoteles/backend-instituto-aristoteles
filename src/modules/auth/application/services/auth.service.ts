@@ -38,8 +38,8 @@ export class AuthService {
           email: user.email,
           password: undefined,
           refreshToken: user.refreshToken,
-          createdat: user.createdat,
-          updatedat: user.updatedat,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         };
       }
     }

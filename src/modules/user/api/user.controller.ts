@@ -37,7 +37,7 @@ export class UserController {
     return this.userService.getUsers();
   }
 
-  @Get('id')
+  @Get(':id')
   @HttpCode(200)
   @ApiOperation({ summary: 'Busca um usuário pelo ID' })
   @ApiResponse({
@@ -52,7 +52,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar um usuário sem estar logado',
+    description: 'Ocorre ao tentar buscar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
   @ApiBearerAuth()
@@ -70,7 +70,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar um usuário sem estar logado',
+    description: 'Ocorre ao buscar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
   })
   @ApiBearerAuth()
