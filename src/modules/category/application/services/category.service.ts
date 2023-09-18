@@ -3,7 +3,7 @@ import { ReadCategoryDto } from '../dtos/read-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { CategoryRepositoryInterface } from '../../../../domain/interfaces/category.repository.interface';
-import { NotFoundSwagger } from '../../../../common/swagger/not-found.swagger';
+import { NotFoundError } from '../../../../common/exceptions/not-found.error';
 
 const Repository = () => Inject('CategoryRepository');
 
@@ -22,6 +22,9 @@ export class CategoryService {
   }
 
   public async deleteCategory(id: string): Promise<void> {
+    const category = await this.repository.getCategory(id);
+    if (!category) throw new NotFoundError('Category not found.');
+
     await this.repository.deleteCategory(id);
   }
 
@@ -40,7 +43,7 @@ export class CategoryService {
 
   public async getCategory(id: string): Promise<ReadCategoryDto> {
     const category = await this.repository.getCategory(id);
-    if (!category) return null;
+    if (!category) throw new NotFoundError('Category not found');
 
     return {
       id: category.id,
@@ -55,6 +58,9 @@ export class CategoryService {
     id: string,
     entity: UpdateCategoryDto,
   ): Promise<void> {
+    const category = await this.repository.getCategory(id);
+    if (!category) throw new NotFoundError('Category not found.');
+
     await this.repository.updateCategory(id, {
       title: entity.title,
       slug: entity.slug,

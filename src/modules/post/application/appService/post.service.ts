@@ -10,6 +10,8 @@ import {
 import { PostEntity } from '../../../../domain/entities/post.entity';
 import { UserRepositoryInterface } from '../../../../domain/interfaces/user.repository.interface';
 import { UserEntity } from '../../../../domain/entities/user.entity';
+import { NotFoundError } from '../../../../common/exceptions/not-found.error';
+import { UnprocessableEntityError } from '../../../../common/exceptions/unprocessable-entity.error';
 
 const Repository = () => Inject('PostRepository');
 const UserRepository = () => Inject('UserRepository');
@@ -28,7 +30,7 @@ export class PostService {
 
   public async getPost(id: string): Promise<PostReadDTO> {
     const post = await this.postRepository.getPost(id);
-    if (!post) return null;
+    if (!post) throw new NotFoundError(`Post with id: ${id} not found`);
 
     return modelToDTO(post);
   }
@@ -39,14 +41,14 @@ export class PostService {
   ): Promise<void> {
     const postEntity: PostEntity = await this.postRepository.getPost(id);
     if (!postEntity) {
-      throw new Error('Post not found.');
+      throw new NotFoundError('Post not found.');
     }
 
     const userEntity: UserEntity = await this.userRepository.getUser(
       post.updatedById,
     );
     if (!userEntity) {
-      throw new Error('User not found.');
+      throw new NotFoundError('User not found.');
     }
 
     await this.postRepository.updatePost(id, {
@@ -57,7 +59,7 @@ export class PostService {
 
   public async createPost(post: PostCreateUpdateDTO): Promise<void> {
     if (!post.createdById) {
-      throw new Error(
+      throw new UnprocessableEntityError(
         'Its mandatory the post to contain a user who is creating.',
       );
     }
@@ -68,7 +70,7 @@ export class PostService {
   public async deletePost(id: string): Promise<void> {
     const postEntity: PostEntity = await this.postRepository.getPost(id);
     if (!postEntity) {
-      throw new Error('Post not found.');
+      throw new NotFoundError('Post not found.');
     }
 
     await this.postRepository.deletePost(id);

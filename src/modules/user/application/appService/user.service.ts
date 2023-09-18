@@ -26,6 +26,7 @@ export class UserService {
 
   public async getUser(id: string): Promise<UserReadDto> {
     const user = await this.userRepository.getUser(id);
+    if (!user) return null;
     return {
       name: user.name,
       email: user.email,

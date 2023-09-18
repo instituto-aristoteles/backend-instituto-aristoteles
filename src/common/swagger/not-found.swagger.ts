@@ -5,8 +5,11 @@ export class NotFoundSwagger {
   statusCode: number;
 
   @ApiProperty()
-  message: string;
+  timestamp: Date;
 
   @ApiProperty()
-  error: string;
+  path: string;
+
+  @ApiProperty()
+  message: string;
 }

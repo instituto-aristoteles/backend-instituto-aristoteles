@@ -5,8 +5,11 @@ export class UnauthorizedSwagger {
   statusCode: number;
 
   @ApiProperty()
-  message: string;
+  timestamp: Date;
 
   @ApiProperty()
-  error: string;
+  path: string;
+
+  @ApiProperty()
+  message: string;
 }
