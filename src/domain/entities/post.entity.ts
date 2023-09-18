@@ -9,6 +9,7 @@ export class PostEntity extends EntityBase {
   slug: string;
   coverUrl?: string;
   category?: CategoryEntity;
+  categoryId?: string;
   status: PostStatusEnum;
   createdById: string;
   updatedById?: string;

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ReadCategoryDto {
   @ApiProperty()
-  id: string;
+  id?: string;
 
   @ApiProperty()
   title: string;
@@ -14,5 +14,5 @@ export class ReadCategoryDto {
   createdAt: Date;
 
   @ApiProperty()
-  updatedAt: Date;
+  updatedAt?: Date;
 }

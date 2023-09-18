@@ -15,6 +15,7 @@ export class PostRepository implements PostRepositoryInterface {
         slug: postEntity.slug,
         coverUrl: postEntity.coverUrl,
         status: postEntity.status,
+        categoryId: postEntity.categoryId,
         createdById: postEntity.createdById,
         updatedById: postEntity.updatedById,
       },
@@ -33,6 +34,7 @@ export class PostRepository implements PostRepositoryInterface {
       include: {
         createdBy: true,
         updatedBy: true,
+        category: true,
       },
     });
   }
@@ -56,6 +58,7 @@ export class PostRepository implements PostRepositoryInterface {
         title: postEntity.title,
         description: postEntity.description,
         status: postEntity.status,
+        categoryId: postEntity.categoryId,
         updatedById: postEntity.updatedById,
       },
     });
