@@ -1,13 +1,14 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserRepositoryInterface } from '../../../../domain/interfaces/user.repository.interface';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { UserPayload } from '../models/user-payload';
 
 import * as bcrypt from 'bcrypt';
-import { UnauthorizedError } from '../../../../domain/exceptions/unauthorized.error';
+import { UnauthorizedError } from '../../../../common/exceptions/unauthorized.error';
 import { UserTokenWithRefresh } from '../models/user-token-with-refresh';
 import * as process from 'process';
+import { ForbiddenError } from '../../../../common/exceptions/forbidden.error';
 
 const UserRepository = () => Inject('UserRepository');
 
@@ -38,8 +39,8 @@ export class AuthService {
           email: user.email,
           password: undefined,
           refreshToken: user.refreshToken,
-          createdat: user.createdat,
-          updatedat: user.updatedat,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         };
       }
     }
@@ -51,14 +52,14 @@ export class AuthService {
 
   async refreshTokens(user: User) {
     const userDb = await this.userRepository.getUserByEmail(user.email);
-    if (!userDb) throw new ForbiddenException('Access denied');
+    if (!userDb) throw new ForbiddenError('Access denied');
 
     const isPasswordValid = await bcrypt.compare(
       user.refreshToken,
       userDb.refreshToken,
     );
 
-    if (!isPasswordValid) throw new ForbiddenException('Access denied');
+    if (!isPasswordValid) throw new ForbiddenError('Access denied');
     const tokens = await this.getTokens(userDb as User);
     await this.updateRefreshToken(userDb.id, tokens.refreshToken);
 

@@ -1,5 +1,6 @@
 import { UserReadDto } from '../../../user/application/dtos/user.read.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { ReadCategoryDto } from '../../../category/application/dtos/read-category.dto';
 
 export class PostReadDTO {
   @ApiProperty()
@@ -19,6 +20,9 @@ export class PostReadDTO {
 
   @ApiProperty()
   updatedBy?: UserReadDto;
+
+  @ApiProperty()
+  category?: ReadCategoryDto;
 
   @ApiProperty()
   createdAt: Date;

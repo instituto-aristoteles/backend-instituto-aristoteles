@@ -6,12 +6,14 @@ import * as Joi from 'joi';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
     UserModule,
     PostModule,
     AuthModule,
+    CategoryModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development', '.env.production'],
       isGlobal: true,

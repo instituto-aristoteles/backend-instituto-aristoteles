@@ -16,6 +16,11 @@ export class PostCreateUpdateDTO {
   @ApiProperty()
   status: number;
 
+  @ApiProperty({
+    nullable: true,
+  })
+  categoryId?: string;
+
   @ApiProperty()
   createdById: string;
 
@@ -30,6 +35,5 @@ export class PostCreateUpdateDTO {
   @ApiProperty({
     nullable: true,
   })
-  @ApiProperty()
   updatedAt?: Date;
 }

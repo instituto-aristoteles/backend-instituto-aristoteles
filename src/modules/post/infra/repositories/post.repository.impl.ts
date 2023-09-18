@@ -15,8 +15,9 @@ export class PostRepository implements PostRepositoryInterface {
         slug: postEntity.slug,
         coverUrl: postEntity.coverUrl,
         status: postEntity.status,
-        createdbyid: postEntity.createdbyid,
-        updatedbyid: postEntity.updatedbyid,
+        categoryId: postEntity.categoryId,
+        createdById: postEntity.createdById,
+        updatedById: postEntity.updatedById,
       },
     });
   }
@@ -31,8 +32,9 @@ export class PostRepository implements PostRepositoryInterface {
     return this.repository.post.findUnique({
       where: { id: id },
       include: {
-        createdby: true,
-        updatedby: true,
+        createdBy: true,
+        updatedBy: true,
+        category: true,
       },
     });
   }
@@ -40,8 +42,9 @@ export class PostRepository implements PostRepositoryInterface {
   async getPosts(): Promise<PostEntity[]> {
     return this.repository.post.findMany({
       include: {
-        createdby: true,
-        updatedby: true,
+        createdBy: true,
+        updatedBy: true,
+        category: true,
       },
     });
   }
@@ -55,7 +58,8 @@ export class PostRepository implements PostRepositoryInterface {
         title: postEntity.title,
         description: postEntity.description,
         status: postEntity.status,
-        updatedbyid: postEntity.updatedbyid,
+        categoryId: postEntity.categoryId,
+        updatedById: postEntity.updatedById,
       },
     });
   }

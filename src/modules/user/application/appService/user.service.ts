@@ -4,7 +4,6 @@ import { UserReadDto } from '../dtos/user.read.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
 
 import * as bcrypt from 'bcrypt';
-import { NotFoundError } from 'src/domain/exceptions/not-found.error';
 
 const Repository = () => Inject('UserRepository');
 
@@ -27,6 +26,7 @@ export class UserService {
 
   public async getUser(id: string): Promise<UserReadDto> {
     const user = await this.userRepository.getUser(id);
+    if (!user) return null;
     return {
       name: user.name,
       email: user.email,
