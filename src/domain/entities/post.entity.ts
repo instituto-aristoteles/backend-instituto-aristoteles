@@ -1,12 +1,13 @@
-import { PostStatusEnum } from '../enums/post-status.enum';
-import { EntityBase } from '../../common/base/entity.base';
-import { UserEntity } from './user.entity';
-import { CategoryEntity } from './category.entity';
+import { PostStatusEnum } from '@/domain/enums/post-status.enum';
+import { EntityBase } from '@/common/base/entity.base';
+import { UserEntity } from '@/domain/entities/user.entity';
+import { CategoryEntity } from '@/domain/entities/category.entity';
 
 export class PostEntity extends EntityBase {
   title: string;
   description: string;
   slug: string;
+  content: string;
   coverUrl?: string;
   category?: CategoryEntity;
   categoryId?: string;

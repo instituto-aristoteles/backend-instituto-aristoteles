@@ -1,39 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class PostCreateUpdateDTO {
   @ApiProperty()
+  @IsString()
   title: string;
 
   @ApiProperty()
+  @IsString()
   description: string;
 
   @ApiProperty()
+  @IsString()
   slug: string;
 
   @ApiProperty()
-  coverUrl: string;
+  @IsString()
+  content: string;
+
+  @ApiProperty({ nullable: true })
+  @IsString()
+  @IsOptional()
+  coverUrl?: string;
 
   @ApiProperty()
+  @IsNumber()
   status: number;
 
-  @ApiProperty({
-    nullable: true,
-  })
+  @ApiProperty({ nullable: true })
+  @IsString()
+  @IsOptional()
   categoryId?: string;
 
   @ApiProperty()
-  createdById: string;
-
-  @ApiProperty({
-    nullable: true,
-  })
-  updatedById?: string;
-
-  @ApiProperty()
-  createdAt: Date;
-
-  @ApiProperty({
-    nullable: true,
-  })
-  updatedAt?: Date;
+  @IsUUID()
+  authorId: string;
 }

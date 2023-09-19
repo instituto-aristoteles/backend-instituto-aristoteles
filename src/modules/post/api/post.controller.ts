@@ -8,18 +8,18 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { PostService } from '../application/appService/post.service';
-import { PostCreateUpdateDTO } from '../application/dtos/post.create.update.dto';
-import { PostReadDTO } from '../application/dtos/post.read.dto';
-import { IsPublic } from '../../../common/decorators/is-public.decorator';
+import { PostService } from '@/modules/post/application/appService/post.service';
+import { PostCreateUpdateDTO } from '@/modules/post/application/dtos/post.create.update.dto';
+import { PostReadDTO } from '@/modules/post/application/dtos/post.read.dto';
+import { IsPublic } from '@/common/decorators/is-public.decorator';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
-import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
+import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
+import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -46,7 +46,7 @@ export class PostController {
   @ApiOperation({ summary: 'Busca o artigo pelo ID' })
   @ApiResponse({
     status: 200,
-    description: 'Retorna o artigo pelo id',
+    description: 'Retorna o artigo pelo idOrSlug',
     type: PostReadDTO,
   })
   @ApiResponse({
@@ -55,7 +55,7 @@ export class PostController {
     type: NotFoundSwagger,
   })
   public async getPost(@Param('id') id: string): Promise<PostReadDTO> {
-    return await this.postService.getPost(id);
+    return await this.postService.findPost(id);
   }
 
   @Post()

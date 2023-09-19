@@ -13,6 +13,7 @@ model Post {
   slug        String    @unique(sort: Desc)
   coverUrl    String?
   description String
+  content     String
   status      Int
   category    Category? @relation(fields: [categoryId], references: [id])
   createdById String

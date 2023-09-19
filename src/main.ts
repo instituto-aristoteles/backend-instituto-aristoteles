@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpExceptionFilterMiddleware } from './common/middlewares/http-exception-filter.middleware';
+import { HttpExceptionFilterMiddleware } from '@/common/middlewares/http-exception-filter.middleware';
 
 async function bootstrap(): Promise<string> {
   const port = parseInt(process.env.APP_PORT, 10) || 3000;
