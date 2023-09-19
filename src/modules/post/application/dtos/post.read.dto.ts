@@ -10,6 +10,9 @@ export class PostReadDTO {
   title: string;
 
   @ApiProperty()
+  slug: string;
+
+  @ApiProperty()
   description: string;
 
   @ApiProperty()

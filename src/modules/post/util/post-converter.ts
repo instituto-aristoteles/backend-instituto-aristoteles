@@ -10,6 +10,7 @@ export function modelToDTO(entity: PostEntity): PostReadDTO {
     status: entity.status,
     content: entity.content,
     category: entity.category,
+    slug: entity.slug,
     createdBy: {
       id: entity.createdBy.id,
       name: entity.createdBy.name,

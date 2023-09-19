@@ -46,7 +46,7 @@ export class PostController {
   @ApiOperation({ summary: 'Busca o artigo pelo ID' })
   @ApiResponse({
     status: 200,
-    description: 'Retorna o artigo pelo id',
+    description: 'Retorna o artigo pelo idOrSlug',
     type: PostReadDTO,
   })
   @ApiResponse({
@@ -54,28 +54,8 @@ export class PostController {
     description: 'Artigo não encontrado pelo ID',
     type: NotFoundSwagger,
   })
-  public async getPostById(@Param('id') id: string): Promise<PostReadDTO> {
-    return await this.postService.findPostById(id);
-  }
-
-  @IsPublic()
-  @Get(':slug')
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Busca o artigo pela Slug' })
-  @ApiResponse({
-    status: 200,
-    description: 'Retorna o artigo pela slug',
-    type: PostReadDTO,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Artigo não encontrado pela Slug',
-    type: NotFoundSwagger,
-  })
-  public async getPostBySlug(
-    @Param('slug') slug: string,
-  ): Promise<PostReadDTO> {
-    return await this.postService.findPostBySlug(slug);
+  public async getPost(@Param('id') id: string): Promise<PostReadDTO> {
+    return await this.postService.findPost(id);
   }
 
   @Post()

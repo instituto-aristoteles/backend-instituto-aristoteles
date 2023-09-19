@@ -1,11 +1,7 @@
-import { PostStatusEnum } from '../enums/post-status.enum';
-import { EntityBase } from '../../common/base/entity.base';
-import { UserEntity } from './user.entity';
-import { CategoryEntity } from './category.entity';
-
-type CreatePostEntity = Required<
-  Omit<PostEntity, 'createdById' | 'updatedById' | 'categoryId'>
->;
+import { PostStatusEnum } from '@/domain/enums/post-status.enum';
+import { EntityBase } from '@/common/base/entity.base';
+import { UserEntity } from '@/domain/entities/user.entity';
+import { CategoryEntity } from '@/domain/entities/category.entity';
 
 export class PostEntity extends EntityBase {
   title: string;

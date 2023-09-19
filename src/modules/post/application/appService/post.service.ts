@@ -25,22 +25,17 @@ export class PostService {
     return modelToDtoList(posts);
   }
 
-  public async findPostById(id: string): Promise<PostReadDTO> {
-    const post = await this.postRepository.findPostById(id);
-    if (!post) throw new NotFoundError(`Post with id: ${id} not found`);
+  public async findPost(id: string): Promise<PostReadDTO> {
+    const post = await this.postRepository.findPost(id);
 
-    return modelToDTO(post);
-  }
-
-  public async findPostBySlug(slug: string): Promise<PostReadDTO> {
-    const post = await this.postRepository.findPostBySlug(slug);
-    if (!post) throw new NotFoundError(`Post with slug: ${slug} not found`);
+    if (!post) throw new NotFoundError(`Post ${id} not found`);
 
     return modelToDTO(post);
   }
 
   public async createPost(post: PostCreateUpdateDTO): Promise<void> {
     const author = await this.userRepository.getUser(post.authorId);
+
     if (!author) {
       throw new UnprocessableEntityError(
         `Author of id ${post.authorId} not found`,
@@ -66,25 +61,40 @@ export class PostService {
     id: string,
     post: PostCreateUpdateDTO,
   ): Promise<void> {
-    const postEntity = await this.postRepository.findPostById(id);
+    const postEntity = await this.postRepository.findPost(id);
     if (!postEntity) {
       throw new NotFoundError('Post not found.');
     }
 
-    const userEntity = await this.userRepository.getUser(post.authorId);
-    if (!userEntity) {
-      throw new NotFoundError('User not found.');
+    const author = await this.userRepository.getUser(post.authorId);
+    if (!author) {
+      throw new UnprocessableEntityError(
+        `Author of id ${post.authorId} not found`,
+      );
+    }
+
+    if (post.categoryId) {
+      const category = await this.categoryRepository.getCategory(
+        post.categoryId,
+      );
+
+      if (!category) {
+        throw new UnprocessableEntityError(
+          `Category of id ${post.categoryId} not found`,
+        );
+      }
     }
 
     await this.postRepository.updatePost(dtoToModel(post, postEntity));
   }
 
   public async deletePost(id: string): Promise<void> {
-    const postEntity = await this.postRepository.findPostById(id);
+    const postEntity = await this.postRepository.findPost(id);
+
     if (!postEntity) {
       throw new NotFoundError('Post not found.');
     }
 
-    await this.postRepository.deletePost(id);
+    await this.postRepository.deletePost(postEntity.id);
   }
 }

@@ -28,20 +28,11 @@ export class PostRepository {
     });
   }
 
-  async findPostById(id: string): Promise<PostEntity> {
-    return this.repository.post.findUnique({
-      where: { id },
-      include: {
-        createdBy: true,
-        updatedBy: true,
-        category: true,
+  async findPost(id: string): Promise<PostEntity> {
+    return this.repository.post.findFirst({
+      where: {
+        OR: [{ id }, { slug: id }],
       },
-    });
-  }
-
-  async findPostBySlug(slug: string): Promise<PostEntity> {
-    return this.repository.post.findUnique({
-      where: { slug },
       include: {
         createdBy: true,
         updatedBy: true,
@@ -60,15 +51,19 @@ export class PostRepository {
     });
   }
 
-  async updatePost(postEntity: PostEntity) {
+  async updatePost(newPost: PostEntity) {
     await this.repository.post.update({
-      where: { id: postEntity.id },
+      where: { id: newPost.id },
       data: {
-        title: postEntity.title,
-        description: postEntity.description,
-        status: postEntity.status,
-        categoryId: postEntity.categoryId,
-        updatedById: postEntity.updatedById,
+        title: newPost.title,
+        description: newPost.description,
+        slug: newPost.slug,
+        content: newPost.content,
+        coverUrl: newPost.coverUrl,
+        status: newPost.status,
+        categoryId: newPost.categoryId,
+        createdById: newPost.createdById,
+        updatedById: newPost.updatedById,
       },
     });
   }
