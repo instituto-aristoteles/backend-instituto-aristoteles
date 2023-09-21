@@ -19,7 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "test:e2e": "npm run docker:up && npx dotenv -e .env.test -- npx prisma migrate deploy && jest -i .*.e2e.spec.ts",
+    "test:e2e": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && jest -i .*.e2e.spec.ts",
     "posttest:e2e": "npm run docker:down",
     "postinstall": "prisma generate --schema=src/database/prisma/schema.prisma"
   },
@@ -39,6 +39,7 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "dotenv-cli": "^7.3.0",
     "joi": "^17.9.2",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

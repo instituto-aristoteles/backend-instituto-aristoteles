@@ -29,8 +29,9 @@ import { CategoryModule } from './modules/category/category.module';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useExisting: JwtAuthGuard,
     },
+    JwtAuthGuard,
   ],
 })
 export class AppModule {}

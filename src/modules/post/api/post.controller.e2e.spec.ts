@@ -1,11 +1,13 @@
-import { INestApplication } from '@nestjs/common';
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '@/database/prisma/service/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import * as request from 'supertest';
 import { PostCreateUpdateDTO } from '@/modules/post/application/dtos/post.create.update.dto';
 import * as bcrypt from 'bcrypt';
+import { AuthRequest } from '@/modules/auth/application/models/auth-request';
 import { AppModule } from '@/app.module';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 
 jest.setTimeout(30000);
 
@@ -22,7 +24,25 @@ describe('PostController', () => {
         }),
         AppModule,
       ],
-    }).compile();
+    })
+      .overrideProvider(JwtAuthGuard)
+      .useValue({
+        canActivate(context: ExecutionContext) {
+          const request = context.switchToHttp().getRequest<AuthRequest>();
+          request.user = {
+            name: 'User',
+            email: 'user@test.com',
+            id: 'some-id',
+            password: '',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            refreshToken: '',
+          };
+
+          return true;
+        },
+      })
+      .compile();
 
     app = moduleRef.createNestApplication();
     prismaService = moduleRef.get<PrismaService>(PrismaService);
