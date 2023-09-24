@@ -8,14 +8,9 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-interface IError {
-  message: string | string[];
-  statusCode: number;
-}
-
 @Catch()
 export class HttpExceptionFilterMiddleware implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const isHttpException = exception instanceof HttpException;
 
     const ctx = host.switchToHttp();
@@ -24,17 +19,13 @@ export class HttpExceptionFilterMiddleware implements ExceptionFilter {
     const status = isHttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
-    const messages = isHttpException
-      ? (exception.getResponse() as IError)
-      : { message: (exception as Error).message, statusCode: null };
+    const messages = exception.getResponse()['message'];
 
     const responseData = {
-      ...{
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      },
-      ...messages,
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      messages: messages,
     };
 
     this.logMessages(request, messages, status, exception);
@@ -44,24 +35,20 @@ export class HttpExceptionFilterMiddleware implements ExceptionFilter {
 
   private logMessages(
     request: Request,
-    message: IError,
+    message: string | object,
     status: number,
-    exception: any,
+    exception: HttpException,
   ) {
     if (status === 500) {
       Logger.error(
         `End request for: ${request.path}`,
-        `method: ${request.method} | statusCode: ${
-          message.statusCode ? message.statusCode : null
-        } | message: ${message.message ? message.message : null}`,
+        `method: ${request.method} | statusCode: ${status} | message: ${message}`,
         status >= 500 ? exception.stack : '',
       );
     } else {
       Logger.warn(
         `End request for: ${request.path}`,
-        `method: ${request.method} | statusCode: ${
-          message.statusCode ? message.statusCode : null
-        } | message: ${message.message ? message.message : null}`,
+        `method: ${request.method} | statusCode: ${status} | message: ${message}`,
       );
     }
   }

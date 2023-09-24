@@ -1,60 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@/domain/entities/user.entity';
-import { PrismaService } from '@/database/prisma/service/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly repository: PrismaService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly repository: Repository<UserEntity>,
+  ) {}
 
   async createUser(entity: UserEntity): Promise<void> {
-    await this.repository.user.create({
-      data: entity,
-    });
+    await this.repository.save(entity);
   }
 
   async deleteUser(id: string): Promise<void> {
-    await this.repository.user.delete({
-      where: { id: id },
-    });
+    await this.repository.delete(id);
   }
 
   async getUser(id: string): Promise<UserEntity> {
-    return this.repository.user.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    return this.repository.findOne({ where: { id: id } });
   }
 
   async getUsers(): Promise<UserEntity[]> {
-    return this.repository.user.findMany();
+    return this.repository.find();
   }
 
   async updateUser(id: string, entity: UserEntity): Promise<void> {
-    await this.repository.user.update({
-      where: {
-        id: id,
-      },
-      data: entity,
-    });
+    await this.repository.update(id, entity);
   }
 
   async getUserByEmail(email: string): Promise<UserEntity> {
-    return this.repository.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    return this.repository.findOne({ where: { email: email } });
   }
 
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
-    await this.repository.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        refreshToken: refreshToken,
-      },
-    });
+    await this.repository.update(id, { refreshToken: refreshToken });
   }
 }

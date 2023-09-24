@@ -1,70 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma/service/prisma.service';
 import { PostEntity } from '@/domain/entities/post.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PostRepository {
-  constructor(private readonly repository: PrismaService) {}
+  constructor(
+    @InjectRepository(PostEntity)
+    private readonly repository: Repository<PostEntity>,
+  ) {}
 
   async createPost(newPost: Omit<PostEntity, 'id'>) {
-    await this.repository.post.create({
-      data: {
-        title: newPost.title,
-        description: newPost.description,
-        slug: newPost.slug,
-        content: newPost.content,
-        coverUrl: newPost.coverUrl,
-        status: newPost.status,
-        categoryId: newPost.categoryId,
-        createdById: newPost.createdById,
-        updatedById: newPost.updatedById,
-      },
-    });
+    await this.repository.save(newPost);
   }
 
   async deletePost(id: string) {
-    await this.repository.post.delete({
-      where: { id },
-    });
+    await this.repository.delete(id);
   }
 
   async findPost(id: string): Promise<PostEntity> {
-    return this.repository.post.findFirst({
-      where: {
-        OR: [{ id }, { slug: id }],
-      },
-      include: {
-        createdBy: true,
-        updatedBy: true,
-        category: true,
-      },
+    return this.repository.findOne({
+      where: [{ id: id }, { slug: id }],
+      relations: ['createdBy', 'updatedBy', 'category'],
     });
   }
 
   async getPosts(): Promise<PostEntity[]> {
-    return this.repository.post.findMany({
-      include: {
-        createdBy: true,
-        updatedBy: true,
-        category: true,
-      },
+    return this.repository.find({
+      relations: ['createdBy', 'updatedBy', 'category'],
     });
   }
 
   async updatePost(newPost: PostEntity) {
-    await this.repository.post.update({
-      where: { id: newPost.id },
-      data: {
-        title: newPost.title,
-        description: newPost.description,
-        slug: newPost.slug,
-        content: newPost.content,
-        coverUrl: newPost.coverUrl,
-        status: newPost.status,
-        categoryId: newPost.categoryId,
-        createdById: newPost.createdById,
-        updatedById: newPost.updatedById,
-      },
-    });
+    await this.repository.update(newPost.id, newPost);
   }
 }
