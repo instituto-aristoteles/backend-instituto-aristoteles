@@ -10,11 +10,7 @@ export class CategoryService {
   constructor(private readonly repository: CategoryRepository) {}
 
   public async createCategory(category: CreateCategoryDto): Promise<void> {
-    await this.repository.createCategory({
-      title: category.title,
-      slug: category.slug,
-      createdAt: new Date(),
-    });
+    await this.repository.createCategory(category);
   }
 
   public async deleteCategory(id: string): Promise<void> {

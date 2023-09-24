@@ -9,7 +9,9 @@ export class CategoryRepository {
     @InjectRepository(CategoryEntity)
     private readonly repository: Repository<CategoryEntity>,
   ) {}
-  public async createCategory(entity: CategoryEntity): Promise<void> {
+  public async createCategory(
+    entity: Omit<CategoryEntity, 'createdAt'>,
+  ): Promise<void> {
     await this.repository.save(entity);
   }
 
