@@ -1,4 +1,4 @@
-import { EntityBase } from '../../common/base/entity.base';
+import { EntityBase } from '@/common/base/entity.base';
 
 export class UserEntity extends EntityBase {
   name: string;

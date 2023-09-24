@@ -1,21 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { UserRepositoryInterface } from '../../../../domain/interfaces/user.repository.interface';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { UserPayload } from '../models/user-payload';
 
 import * as bcrypt from 'bcrypt';
-import { UnauthorizedError } from '../../../../common/exceptions/unauthorized.error';
+import { UnauthorizedError } from '@/common/exceptions/unauthorized.error';
 import { UserTokenWithRefresh } from '../models/user-token-with-refresh';
 import * as process from 'process';
-import { ForbiddenError } from '../../../../common/exceptions/forbidden.error';
-
-const UserRepository = () => Inject('UserRepository');
+import { ForbiddenError } from '@/common/exceptions/forbidden.error';
+import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @UserRepository() private readonly userRepository: UserRepositoryInterface,
+    private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
   ) {}
 

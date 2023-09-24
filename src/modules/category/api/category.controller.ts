@@ -14,9 +14,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
-import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
-import { IsPublic } from '../../../common/decorators/is-public.decorator';
+import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
+import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
+import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { CategoryService } from '../application/services/category.service';
 import { ReadCategoryDto } from '../application/dtos/read-category.dto';
 import { CreateCategoryDto } from '../application/dtos/create-category.dto';

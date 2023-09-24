@@ -18,7 +18,7 @@ export class HttpExceptionFilterMiddleware implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.message,
+      messages: exception.getResponse()['message'],
     });
   }
 }

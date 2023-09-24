@@ -5,8 +5,11 @@ export class BadRequestSwagger {
   statusCode: number;
 
   @ApiProperty()
-  message: string[];
+  timestamp: Date;
 
   @ApiProperty()
-  error: string;
+  path: string;
+
+  @ApiProperty()
+  messages: string | string[];
 }

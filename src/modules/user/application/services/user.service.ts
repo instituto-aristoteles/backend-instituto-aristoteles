@@ -1,17 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { UserRepositoryInterface } from '../../../../domain/interfaces/user.repository.interface';
+import { Injectable } from '@nestjs/common';
 import { UserReadDto } from '../dtos/user.read.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
 
 import * as bcrypt from 'bcrypt';
-
-const Repository = () => Inject('UserRepository');
+import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @Repository() private readonly userRepository: UserRepositoryInterface,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   public async getUsers(): Promise<UserReadDto[]> {
     const users = await this.userRepository.getUsers();
