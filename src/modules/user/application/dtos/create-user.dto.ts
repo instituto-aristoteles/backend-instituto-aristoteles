@@ -1,5 +1,5 @@
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
-import { UserEntity } from '../../../../domain/entities/user.entity';
+import { UserEntity } from '@/domain/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto extends UserEntity {

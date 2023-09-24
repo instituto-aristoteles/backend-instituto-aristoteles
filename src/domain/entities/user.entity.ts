@@ -7,13 +7,16 @@ export class UserEntity extends EntityBase<UserEntity> {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  avatar?: string;
+
   @Column()
   email: string;
 
   @Column()
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   refreshToken: string;
 
   @OneToMany(() => PostEntity, (post) => post.createdBy)

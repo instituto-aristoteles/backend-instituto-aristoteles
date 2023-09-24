@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -10,14 +11,12 @@ import { AuthService } from '../application/services/auth.service';
 import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { AuthRequest } from '../application/models/auth-request';
 import { LocalAuthGuard } from '@/common/guards/local-auth.guard';
-import { RefreshTokenAuthGuard } from '@/common/guards/refresh-token-auth.guard';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { User } from '@prisma/client';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { UserTokenWithRefresh } from '../application/models/user-token-with-refresh';
 import { LoginRequestBody } from '../application/models/login-request-body';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
+import { RefreshTokenBody } from '@/modules/auth/application/models/refresh-token-body';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -50,7 +49,6 @@ export class AuthController {
   }
 
   @IsPublic()
-  @UseGuards(RefreshTokenAuthGuard)
   @Post('refresh')
   @ApiOperation({ summary: 'Atualizar o refresh token vinculado ao usuário' })
   @ApiResponse({
@@ -68,8 +66,9 @@ export class AuthController {
     description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
     type: BadRequestSwagger,
   })
+  @ApiBody({ type: RefreshTokenBody })
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@CurrentUser() user: User) {
-    return await this.authService.refreshTokens(user);
+  async refreshToken(@Body() req: RefreshTokenBody) {
+    return this.authService.reauthenticate(req);
   }
 }

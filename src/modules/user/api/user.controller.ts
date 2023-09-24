@@ -14,9 +14,12 @@ import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
 import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
+import { UseInterceptors } from '@nestjs/common/decorators/core/use-interceptors.decorator';
+import { CurrentUserInterceptor } from '@/common/interceptors/current-user.interceptor';
 
 @Controller('users')
 @ApiTags('users')
+@UseInterceptors(CurrentUserInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -36,6 +39,31 @@ export class UserController {
   @ApiBearerAuth()
   public async getUsers(): Promise<UserReadDto[]> {
     return this.userService.getUsers();
+  }
+
+  @Get('me')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Busca o usuário baseado no token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna o respectivo usuário',
+    type: UserReadDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao buscar criar um usuário sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiBearerAuth()
+  public async getCurrentUser(
+    @CurrentUser() user: Pick<UserEntity, 'id' | 'name' | 'email' | 'avatar'>,
+  ): Promise<UserReadDto> {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+    };
   }
 
   @Get(':id')
@@ -59,26 +87,6 @@ export class UserController {
   @ApiBearerAuth()
   public async getUser(@Param('id') id: string): Promise<UserReadDto> {
     return this.userService.getUser(id);
-  }
-
-  @Get('me')
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Busca o usuário baseado no token' })
-  @ApiResponse({
-    status: 200,
-    description: 'Retorna o respectivo usuário',
-    type: UserReadDto,
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Ocorre ao buscar criar um usuário sem estar logado',
-    type: UnauthorizedSwagger,
-  })
-  @ApiBearerAuth()
-  public async getCurrentUser(
-    @CurrentUser() user: UserEntity,
-  ): Promise<UserReadDto> {
-    return user;
   }
 
   @IsPublic()
