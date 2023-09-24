@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import { UserPayload } from '../models/user-payload';
 
 import * as bcrypt from 'bcrypt';
@@ -9,6 +8,9 @@ import { UserTokenWithRefresh } from '../models/user-token-with-refresh';
 import * as process from 'process';
 import { ForbiddenError } from '@/common/exceptions/forbidden.error';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
+import { UserEntity } from '@/domain/entities/user.entity';
+import { RefreshTokenBody } from '@/modules/auth/application/models/refresh-token-body';
+import { NotFoundError } from '@/common/exceptions/not-found.error';
 
 @Injectable()
 export class AuthService {
@@ -17,14 +19,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(user: User): Promise<UserTokenWithRefresh> {
+  async login(user: UserEntity): Promise<UserTokenWithRefresh> {
     const tokens = await this.getTokens(user);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     return tokens;
   }
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<Omit<UserEntity, 'postsUpdated' | 'postsCreated'>> {
     const user = await this.userRepository.getUserByEmail(email);
 
     if (user) {
@@ -48,28 +53,53 @@ export class AuthService {
     );
   }
 
-  async refreshTokens(user: User) {
-    const userDb = await this.userRepository.getUserByEmail(user.email);
-    if (!userDb) throw new ForbiddenError('Access denied');
+  private async verifyRefreshToken(
+    body: RefreshTokenBody,
+  ): Promise<UserEntity> {
+    const email = this.jwtService.decode(body.refreshToken)['email'];
+    if (!email)
+      throw new NotFoundError('User not found or refresh token is invalid.');
 
-    const isPasswordValid = await bcrypt.compare(
-      user.refreshToken,
-      userDb.refreshToken,
-    );
+    const user = await this.userRepository.getUserByEmail(email);
+    if (!user) throw new NotFoundError('User not found');
 
-    if (!isPasswordValid) throw new ForbiddenError('Access denied');
-    const tokens = await this.getTokens(userDb as User);
-    await this.updateRefreshToken(userDb.id, tokens.refreshToken);
+    try {
+      await this.jwtService.verify(body.refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+
+      return user;
+    } catch (e: any) {
+      if (e.name === 'JsonWebTokenError') {
+        throw new UnauthorizedError('Invalid signature');
+      }
+
+      if ((e.name = 'TokenExpiredError')) {
+        throw new UnauthorizedError('Expired token');
+      }
+
+      throw new UnauthorizedError(e.name);
+    }
+  }
+
+  async reauthenticate(body: RefreshTokenBody) {
+    const payload: UserEntity = await this.verifyRefreshToken(body);
+
+    const tokens = await this.getTokens(payload);
+    await this.updateRefreshToken(payload.id, tokens.refreshToken);
 
     return tokens;
   }
 
-  async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
+  private async updateRefreshToken(
+    id: string,
+    refreshToken: string,
+  ): Promise<void> {
     const hash = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.updateRefreshToken(id, hash);
   }
 
-  async getTokens(user: User): Promise<UserTokenWithRefresh> {
+  private async getTokens(user: UserEntity): Promise<UserTokenWithRefresh> {
     const jwtPayload: UserPayload = {
       sub: user.id,
       email: user.email,

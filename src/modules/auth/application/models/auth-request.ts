@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { User } from '@prisma/client';
+import { UserEntity } from '@/domain/entities/user.entity';
 
 export interface AuthRequest extends Request {
-  user: User;
+  user: UserEntity;
 }

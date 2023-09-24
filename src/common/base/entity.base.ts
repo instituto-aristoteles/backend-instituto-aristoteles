@@ -1,5 +1,4 @@
 import {
-  BeforeInsert,
   CreateDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,11 +20,6 @@ export class EntityBase<T> {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updatedAt?: Date;
-
-  // @BeforeInsert()
-  // insertCreated() {
-  //   this.createdAt = new Date();
-  // }
 
   constructor(entity: Partial<T>) {
     Object.assign(this, entity);

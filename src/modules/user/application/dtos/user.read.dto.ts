@@ -9,4 +9,7 @@ export class UserReadDto {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty({ nullable: true })
+  avatar?: string;
 }

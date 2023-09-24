@@ -17,6 +17,7 @@ import { PostEntity } from '@/domain/entities/post.entity';
         database: config.getOrThrow('DATABASE_NAME'),
         autoLoadEntities: true,
         synchronize: false,
+        migrations: ['./src/database/typeorm/migrations'],
         entities: [UserEntity, CategoryEntity, PostEntity],
         ssl: true,
       }),
