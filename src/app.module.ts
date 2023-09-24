@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { CategoryModule } from './modules/category/category.module';
+import { DatabaseModule } from '@/database/typeorm/database.module';
 
 @Module({
   imports: [
@@ -14,11 +15,15 @@ import { CategoryModule } from './modules/category/category.module';
     PostModule,
     AuthModule,
     CategoryModule,
+    DatabaseModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development', '.env.production'],
       isGlobal: true,
       validationSchema: Joi.object({
-        DATABASE_URL: Joi.string().required(),
+        DATABASE_USER: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        DATABASE_PORT: Joi.string().required(),
+        DATABASE_HOST: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_REFRESH_SECRET: Joi.string().required(),
         APP_PORT: Joi.number().default(3000),

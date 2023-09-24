@@ -1,30 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryEntity } from '@/domain/entities/category.entity';
-import { PrismaService } from '@/database/prisma/service/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CategoryRepository {
-  constructor(private readonly repository: PrismaService) {}
+  constructor(
+    @InjectRepository(CategoryEntity)
+    private readonly repository: Repository<CategoryEntity>,
+  ) {}
   public async createCategory(entity: CategoryEntity): Promise<void> {
-    await this.repository.category.create({
-      data: entity,
-    });
+    await this.repository.save(entity);
   }
 
   public async deleteCategory(id: string): Promise<void> {
-    await this.repository.category.delete({
-      where: {
-        id: id,
-      },
-    });
+    await this.repository.delete(id);
   }
 
   public async getCategories(): Promise<CategoryEntity[]> {
-    return this.repository.category.findMany();
+    return this.repository.find();
   }
 
   public async getCategory(id: string): Promise<CategoryEntity> {
-    return this.repository.category.findUnique({
+    return this.repository.findOne({
       where: {
         id: id,
       },
@@ -35,11 +33,6 @@ export class CategoryRepository {
     id: string,
     entity: CategoryEntity,
   ): Promise<void> {
-    await this.repository.category.update({
-      where: {
-        id: id,
-      },
-      data: entity,
-    });
+    await this.repository.update(id, entity);
   }
 }
