@@ -12,4 +12,7 @@ export class UnauthorizedSwagger {
 
   @ApiProperty()
   messages: string | string[];
+
+  @ApiProperty({ nullable: true })
+  error?: string;
 }

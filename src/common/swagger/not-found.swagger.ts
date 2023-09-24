@@ -12,4 +12,7 @@ export class NotFoundSwagger {
 
   @ApiProperty()
   messages: string | string[];
+
+  @ApiProperty({ nullable: true })
+  error?: string;
 }

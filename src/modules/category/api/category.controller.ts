@@ -21,6 +21,7 @@ import { CategoryService } from '../application/services/category.service';
 import { ReadCategoryDto } from '../application/dtos/read-category.dto';
 import { CreateCategoryDto } from '../application/dtos/create-category.dto';
 import { UpdateCategoryDto } from '../application/dtos/update-category.dto';
+import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 
 @Controller('categories')
 @ApiTags('categories')
@@ -77,6 +78,11 @@ export class CategoryController {
     description: 'Ocorre ao tentar criar uma categoria sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
   @ApiBearerAuth()
   public async createCategory(
     @Body() category: CreateCategoryDto,
@@ -96,6 +102,11 @@ export class CategoryController {
     description: 'Ocorre ao tentar criar uma categoria sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
   @ApiBearerAuth()
   public async deleteCategory(@Param('id') id: string): Promise<void> {
     await this.categoryService.deleteCategory(id);
@@ -112,6 +123,11 @@ export class CategoryController {
     status: 401,
     description: 'Ocorre ao tentar criar uma categoria sem estar logado',
     type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
   })
   @ApiBearerAuth()
   public async updateCategory(

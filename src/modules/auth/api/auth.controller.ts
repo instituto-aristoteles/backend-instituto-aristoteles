@@ -17,6 +17,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { UserTokenWithRefresh } from '../application/models/user-token-with-refresh';
 import { LoginRequestBody } from '../application/models/login-request-body';
+import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -37,6 +38,11 @@ export class AuthController {
     description: 'Email e/ou senha incorretos',
     type: UnauthorizedSwagger,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
   @ApiBody({ type: LoginRequestBody })
   @HttpCode(HttpStatus.OK)
   async login(@Request() req: AuthRequest) {
@@ -56,6 +62,11 @@ export class AuthController {
     status: 401,
     description: 'Ocorre caso não esteja logado com seu email e senha',
     type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
   })
   @HttpCode(HttpStatus.OK)
   async refreshToken(@CurrentUser() user: User) {

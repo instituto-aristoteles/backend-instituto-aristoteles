@@ -13,6 +13,7 @@ import {
 import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
 import { IsPublic } from '@/common/decorators/is-public.decorator';
+import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 
 @Controller('users')
 @ApiTags('users')
@@ -92,6 +93,11 @@ export class UserController {
     status: 401,
     description: 'Ocorre ao tentar criar um usuário sem estar logado',
     type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
   })
   @ApiBearerAuth()
   public async createUser(@Body() user: CreateUserDto): Promise<void> {

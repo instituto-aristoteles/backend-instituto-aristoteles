@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
+import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -70,6 +71,11 @@ export class PostController {
     description: 'Ocorre ao tentar criar um artigo sem estar logado',
     type: UnauthorizedSwagger,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
   @ApiBearerAuth()
   public async createPost(@Body() post: PostCreateUpdateDTO): Promise<void> {
     await this.postService.createPost(post);
@@ -86,6 +92,11 @@ export class PostController {
     status: 401,
     description: 'Ocorre ao tentar criar um artigo sem estar logado',
     type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
   })
   @ApiBearerAuth()
   public async updatePost(
@@ -106,6 +117,11 @@ export class PostController {
     status: 401,
     description: 'Ocorre ao tentar criar um artigo sem estar logado',
     type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
   })
   @ApiBearerAuth()
   public async deletePost(@Param('id') id: string): Promise<void> {
