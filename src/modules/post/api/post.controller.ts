@@ -8,7 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { PostService } from '@/modules/post/application/appService/post.service';
+import { PostService } from '@/modules/post/application/services/post.service';
 import { PostCreateUpdateDTO } from '@/modules/post/application/dtos/post.create.update.dto';
 import { PostReadDTO } from '@/modules/post/application/dtos/post.read.dto';
 import { IsPublic } from '@/common/decorators/is-public.decorator';

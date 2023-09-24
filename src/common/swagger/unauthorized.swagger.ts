@@ -11,5 +11,5 @@ export class UnauthorizedSwagger {
   path: string;
 
   @ApiProperty()
-  message: string;
+  messages: string | string[];
 }

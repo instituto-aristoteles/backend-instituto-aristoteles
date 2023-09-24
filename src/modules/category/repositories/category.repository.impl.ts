@@ -1,10 +1,9 @@
-import { CategoryRepositoryInterface } from '../../../../domain/interfaces/category.repository.interface';
 import { Injectable } from '@nestjs/common';
-import { CategoryEntity } from '../../../../domain/entities/category.entity';
-import { PrismaService } from '../../../../database/prisma/service/prisma.service';
+import { CategoryEntity } from '@/domain/entities/category.entity';
+import { PrismaService } from '@/database/prisma/service/prisma.service';
 
 @Injectable()
-export class CategoryRepository implements CategoryRepositoryInterface {
+export class CategoryRepository {
   constructor(private readonly repository: PrismaService) {}
   public async createCategory(entity: CategoryEntity): Promise<void> {
     await this.repository.category.create({

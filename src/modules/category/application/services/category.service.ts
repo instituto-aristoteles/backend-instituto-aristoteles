@@ -1,17 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ReadCategoryDto } from '../dtos/read-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
-import { CategoryRepositoryInterface } from '../../../../domain/interfaces/category.repository.interface';
-import { NotFoundError } from '../../../../common/exceptions/not-found.error';
-
-const Repository = () => Inject('CategoryRepository');
+import { NotFoundError } from '@/common/exceptions/not-found.error';
+import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
 
 @Injectable()
 export class CategoryService {
-  constructor(
-    @Repository() private readonly repository: CategoryRepositoryInterface,
-  ) {}
+  constructor(private readonly repository: CategoryRepository) {}
 
   public async createCategory(category: CreateCategoryDto): Promise<void> {
     await this.repository.createCategory({

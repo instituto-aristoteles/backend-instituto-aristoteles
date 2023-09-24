@@ -7,14 +7,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../application/services/auth.service';
-import { IsPublic } from '../../../common/decorators/is-public.decorator';
+import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { AuthRequest } from '../application/models/auth-request';
-import { LocalAuthGuard } from '../../../common/guards/local-auth.guard';
-import { RefreshTokenAuthGuard } from '../../../common/guards/refresh-token-auth.guard';
-import { CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { LocalAuthGuard } from '@/common/guards/local-auth.guard';
+import { RefreshTokenAuthGuard } from '@/common/guards/refresh-token-auth.guard';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { User } from '@prisma/client';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
+import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { UserTokenWithRefresh } from '../application/models/user-token-with-refresh';
 import { LoginRequestBody } from '../application/models/login-request-body';
 

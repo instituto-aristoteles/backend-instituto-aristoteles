@@ -11,5 +11,5 @@ export class NotFoundSwagger {
   path: string;
 
   @ApiProperty()
-  message: string;
+  messages: string | string[];
 }

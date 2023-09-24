@@ -1,18 +1,18 @@
 import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
-import { UserService } from '../application/appService/user.service';
+import { UserService } from '@/modules/user/application/services/user.service';
 import { CreateUserDto } from '../application/dtos/create-user.dto';
 import { UserReadDto } from '../application/dtos/user.read.dto';
-import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import { UserEntity } from '../../../domain/entities/user.entity';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserEntity } from '@/domain/entities/user.entity';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UnauthorizedSwagger } from '../../../common/swagger/unauthorized.swagger';
-import { NotFoundSwagger } from '../../../common/swagger/not-found.swagger';
-import { IsPublic } from '../../../common/decorators/is-public.decorator';
+import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
+import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
+import { IsPublic } from '@/common/decorators/is-public.decorator';
 
 @Controller('users')
 @ApiTags('users')

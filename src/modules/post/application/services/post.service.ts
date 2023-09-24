@@ -9,8 +9,8 @@ import {
 import { NotFoundError } from '@/common/exceptions/not-found.error';
 import { UnprocessableEntityError } from '@/common/exceptions/unprocessable-entity.error';
 import { PostRepository } from '@/modules/post/repositories/post.repository';
-import { UserRepository } from '@/modules/user/infra/repositories/user.repository.impl';
-import { CategoryRepository } from '@/modules/category/infra/repositories/category.repository.impl';
+import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
+import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
 
 @Injectable()
 export class PostService {
