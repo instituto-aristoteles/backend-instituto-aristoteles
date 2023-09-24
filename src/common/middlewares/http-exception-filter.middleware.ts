@@ -10,7 +10,7 @@ import { Request, Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilterMiddleware implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost) {
     const isHttpException = exception instanceof HttpException;
 
     const ctx = host.switchToHttp();
@@ -19,7 +19,10 @@ export class HttpExceptionFilterMiddleware implements ExceptionFilter {
     const status = isHttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
-    const messages = exception.getResponse()['message'];
+    const messages = isHttpException
+      ? (exception as HttpException).getResponse()['message']
+      : (exception as Error).message;
+    console.log(exception);
 
     const responseData = {
       statusCode: status,
