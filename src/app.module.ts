@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { CategoryModule } from './modules/category/category.module';
 import { DatabaseModule } from '@/database/typeorm/database.module';
+import { HealthModule } from '@/modules/health/health.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DatabaseModule } from '@/database/typeorm/database.module';
     AuthModule,
     CategoryModule,
     DatabaseModule,
+    HealthModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development', '.env.production'],
       isGlobal: true,
