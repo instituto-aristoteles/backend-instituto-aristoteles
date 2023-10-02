@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -55,7 +56,9 @@ export class PostController {
     description: 'Artigo não encontrado pelo ID',
     type: NotFoundSwagger,
   })
-  public async getPost(@Param('id') id: string): Promise<PostReadDTO> {
+  public async getPost(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<PostReadDTO> {
     return await this.postService.findPost(id);
   }
 
@@ -100,7 +103,7 @@ export class PostController {
   })
   @ApiBearerAuth()
   public async updatePost(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() post: PostCreateUpdateDTO,
   ): Promise<void> {
     await this.postService.updatePost(id, post);
@@ -124,7 +127,9 @@ export class PostController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async deletePost(@Param('id') id: string): Promise<void> {
+  public async deletePost(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
     await this.postService.deletePost(id);
   }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { UserService } from '@/modules/user/application/services/user.service';
 import { CreateUserDto } from '../application/dtos/create-user.dto';
 import { UserReadDto } from '../application/dtos/user.read.dto';
@@ -85,7 +93,9 @@ export class UserController {
     type: UnauthorizedSwagger,
   })
   @ApiBearerAuth()
-  public async getUser(@Param('id') id: string): Promise<UserReadDto> {
+  public async getUser(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<UserReadDto> {
     return this.userService.getUser(id);
   }
 

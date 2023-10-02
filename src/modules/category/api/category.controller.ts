@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -62,7 +63,9 @@ export class CategoryController {
     type: NotFoundSwagger,
   })
   @ApiBearerAuth()
-  public async getCategory(@Param('id') id: string): Promise<ReadCategoryDto> {
+  public async getCategory(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<ReadCategoryDto> {
     return await this.categoryService.getCategory(id);
   }
 
@@ -108,7 +111,9 @@ export class CategoryController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async deleteCategory(@Param('id') id: string): Promise<void> {
+  public async deleteCategory(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
     await this.categoryService.deleteCategory(id);
   }
 
@@ -131,7 +136,7 @@ export class CategoryController {
   })
   @ApiBearerAuth()
   public async updateCategory(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() category: UpdateCategoryDto,
   ): Promise<void> {
     await this.categoryService.updateCategory(id, category);

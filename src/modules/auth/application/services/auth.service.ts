@@ -6,7 +6,6 @@ import * as bcrypt from 'bcrypt';
 import { UnauthorizedError } from '@/common/exceptions/unauthorized.error';
 import { UserTokenWithRefresh } from '../models/user-token-with-refresh';
 import * as process from 'process';
-import { ForbiddenError } from '@/common/exceptions/forbidden.error';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { UserEntity } from '@/domain/entities/user.entity';
 import { RefreshTokenBody } from '@/modules/auth/application/models/refresh-token-body';
@@ -56,6 +55,22 @@ export class AuthService {
   private async verifyRefreshToken(
     body: RefreshTokenBody,
   ): Promise<UserEntity> {
+    try {
+      await this.jwtService.verify(body.refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+    } catch (e: any) {
+      if (e.name === 'JsonWebTokenError' || e.name === 'SyntaxError') {
+        throw new UnauthorizedError('Invalid signature');
+      }
+
+      if (e.name === 'TokenExpiredError') {
+        throw new UnauthorizedError('Expired token');
+      }
+
+      throw new UnauthorizedError(e.name);
+    }
+
     const email = this.jwtService.decode(body.refreshToken)['email'];
     if (!email)
       throw new NotFoundError('User not found or refresh token is invalid.');
@@ -63,23 +78,7 @@ export class AuthService {
     const user = await this.userRepository.getUserByEmail(email);
     if (!user) throw new NotFoundError('User not found');
 
-    try {
-      await this.jwtService.verify(body.refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
-
-      return user;
-    } catch (e: any) {
-      if (e.name === 'JsonWebTokenError') {
-        throw new UnauthorizedError('Invalid signature');
-      }
-
-      if ((e.name = 'TokenExpiredError')) {
-        throw new UnauthorizedError('Expired token');
-      }
-
-      throw new UnauthorizedError(e.name);
-    }
+    return user;
   }
 
   async reauthenticate(body: RefreshTokenBody) {
