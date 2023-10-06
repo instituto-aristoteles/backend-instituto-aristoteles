@@ -32,7 +32,9 @@ export class UserService {
 
   public async createUser(user: CreateUserDto): Promise<void> {
     await this.userRepository.createUser({
-      ...user,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar.length == 0 ? null : user.avatar,
       password: await bcrypt.hash(user.password, 10),
     });
   }

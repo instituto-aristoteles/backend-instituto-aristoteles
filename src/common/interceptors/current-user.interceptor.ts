@@ -18,6 +18,7 @@ export class CurrentUserInterceptor implements NestInterceptor {
   ) {}
   async intercept(context: ExecutionContext, handler: CallHandler) {
     const request = context.switchToHttp().getRequest<AuthRequest>();
+    if (request.method === 'POST') return handler.handle();
 
     try {
       request.user = await this.repository.findOne({
