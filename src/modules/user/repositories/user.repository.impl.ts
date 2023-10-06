@@ -10,7 +10,9 @@ export class UserRepository {
     private readonly repository: Repository<UserEntity>,
   ) {}
 
-  async createUser(entity: UserEntity): Promise<void> {
+  async createUser(
+    entity: Pick<UserEntity, 'name' | 'email' | 'password' | 'avatar'>,
+  ): Promise<void> {
     await this.repository.save(entity);
   }
 

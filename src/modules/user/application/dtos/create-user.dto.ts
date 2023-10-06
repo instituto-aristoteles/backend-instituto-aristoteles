@@ -1,8 +1,13 @@
-import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
-import { UserEntity } from '@/domain/entities/user.entity';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto extends UserEntity {
+export class CreateUserDto {
   @IsString()
   @ApiProperty()
   name: string;
@@ -16,4 +21,9 @@ export class CreateUserDto extends UserEntity {
   @MaxLength(20)
   @ApiProperty()
   password: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 }
