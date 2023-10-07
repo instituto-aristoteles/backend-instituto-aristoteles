@@ -21,7 +21,7 @@ export class PostEntity extends EntityBase<PostEntity> {
   @Column({ nullable: true })
   coverUrl?: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => CategoryEntity, (category) => category.id)
   category?: CategoryEntity;
 
   @Column({ nullable: true })
