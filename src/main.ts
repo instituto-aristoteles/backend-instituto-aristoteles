@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -11,6 +11,8 @@ async function bootstrap(): Promise<string> {
   const config = new DocumentBuilder()
     .setTitle('Instituto Aristóteles - API')
     .setVersion('1.0')
+    .setExternalDoc('Swagger.json', 'swagger-json')
+    .setDescription('Backend do site Instituto Aristóteles')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
@@ -31,7 +33,8 @@ async function bootstrap(): Promise<string> {
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalFilters(new HttpExceptionFilterMiddleware());
+  const httpAdapter = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new HttpExceptionFilterMiddleware(httpAdapter));
 
   app.enableCors();
   await app.listen(port);

@@ -34,7 +34,7 @@ export class UserService {
     await this.userRepository.createUser({
       name: user.name,
       email: user.email,
-      avatar: user.avatar.length == 0 ? null : user.avatar,
+      avatar: !user.avatar ? null : user.avatar,
       password: await bcrypt.hash(user.password, 10),
     });
   }

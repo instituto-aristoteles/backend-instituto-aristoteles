@@ -6,53 +6,63 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { HttpAdapterHost } from '@nestjs/core';
+
+type ResponseData = {
+  statusCode: number;
+  timestamp: string;
+  path: string;
+  messages: string | string[];
+};
 
 @Catch()
 export class HttpExceptionFilterMiddleware implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
-    const isHttpException = exception instanceof HttpException;
-    const message = (exception as HttpException).getResponse()['message']
-      ? (exception as HttpException).getResponse()['message']
-      : (exception as HttpException).getResponse();
-
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  catch(exception: unknown, host: ArgumentsHost) {
+    const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const isHttpException = exception instanceof HttpException;
+
     const status = isHttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const messages = isHttpException ? message : (exception as Error).message;
+    const messages = isHttpException
+      ? exception.getResponse()['message'] || exception.getResponse()
+      : (exception as Error).message;
 
-    const responseData = {
+    const responseData: ResponseData = {
       statusCode: status,
       timestamp: new Date().toISOString(),
-      path: request.url,
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
       messages: messages,
     };
 
-    this.logMessages(request, messages, status, exception);
+    this.logMessages(
+      httpAdapter.getRequestMethod(ctx.getRequest()),
+      responseData,
+      exception,
+    );
 
-    response.status(status).json(responseData);
+    httpAdapter.reply(ctx.getResponse(), responseData, status);
   }
 
   private logMessages(
-    request: Request,
-    message: string | object,
-    status: number,
-    exception: HttpException,
+    method: string,
+    response: ResponseData,
+    exception: unknown,
   ) {
-    if (status === 500) {
+    if (response.statusCode === 500) {
       Logger.error(
-        `End request for: ${request.path}`,
-        `method: ${request.method} | statusCode: ${status} | message: ${message}`,
-        status >= 500 ? exception.stack : '',
+        `method: ${method} | statusCode: ${response.statusCode} | messages: ${response.messages}`,
+        `End request for: ${response.path}`,
+        response.statusCode >= 500 ? exception : '',
       );
     } else {
       Logger.warn(
-        `End request for: ${request.path}`,
-        `method: ${request.method} | statusCode: ${status} | message: ${message}`,
+        `method: ${method} | statusCode: ${response.statusCode} | messages: ${response.messages}`,
+        `End request for: ${response.path}`,
+        '',
       );
     }
   }
