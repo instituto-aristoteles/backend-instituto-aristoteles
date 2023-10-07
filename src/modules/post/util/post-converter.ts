@@ -25,10 +25,7 @@ export function modelToDTO(entity: PostEntity): PostReadDTO {
 }
 
 export function modelToDtoList(entityList: PostEntity[]): PostReadDTO[] {
-  const posts: PostReadDTO[] = [];
-  entityList.forEach((x) => posts.push(modelToDTO(x)));
-
-  return posts;
+  return entityList.map(modelToDTO);
 }
 
 export function dtoToModel(

@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { PostService } from '@/modules/post/application/services/post.service';
 import { PostCreateUpdateDTO } from '@/modules/post/application/dtos/post.create.update.dto';
@@ -22,6 +23,8 @@ import {
 import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
+import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
+import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -35,11 +38,10 @@ export class PostController {
   @ApiResponse({
     status: 200,
     description: 'Lista de todos os artigos',
-    type: PostReadDTO,
-    isArray: true,
+    type: PaginatedResponse<PostReadDTO>,
   })
-  public async getPosts(): Promise<PostReadDTO[]> {
-    return this.postService.getPosts();
+  public async getPosts(@Query() filters: GetPostsFiltersDto) {
+    return this.postService.getPosts(filters);
   }
 
   @IsPublic()
@@ -56,9 +58,7 @@ export class PostController {
     description: 'Artigo não encontrado pelo ID',
     type: NotFoundSwagger,
   })
-  public async getPost(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<PostReadDTO> {
+  public async getPost(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.postService.findPost(id);
   }
 
@@ -80,7 +80,7 @@ export class PostController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async createPost(@Body() post: PostCreateUpdateDTO): Promise<void> {
+  public async createPost(@Body() post: PostCreateUpdateDTO) {
     await this.postService.createPost(post);
   }
 
@@ -105,7 +105,7 @@ export class PostController {
   public async updatePost(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() post: PostCreateUpdateDTO,
-  ): Promise<void> {
+  ) {
     await this.postService.updatePost(id, post);
   }
 
@@ -127,9 +127,7 @@ export class PostController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async deletePost(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<void> {
+  public async deletePost(@Param('id', new ParseUUIDPipe()) id: string) {
     await this.postService.deletePost(id);
   }
 }

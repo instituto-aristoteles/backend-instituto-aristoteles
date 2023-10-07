@@ -11,6 +11,8 @@ import { UnprocessableEntityError } from '@/common/exceptions/unprocessable-enti
 import { PostRepository } from '@/modules/post/repositories/post.repository';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
+import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
+import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
 
 @Injectable()
 export class PostService {
@@ -20,9 +22,16 @@ export class PostService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  public async getPosts(): Promise<PostReadDTO[]> {
-    const posts = await this.postRepository.getPosts();
-    return modelToDtoList(posts);
+  public async getPosts(
+    filters: GetPostsFiltersDto,
+  ): Promise<PaginatedResponse<PostReadDTO>> {
+    const posts = await this.postRepository.getPosts(filters);
+
+    return {
+      currentPage: filters.page,
+      pageSize: filters.pageSize,
+      results: modelToDtoList(posts),
+    };
   }
 
   public async findPost(id: string): Promise<PostReadDTO> {
