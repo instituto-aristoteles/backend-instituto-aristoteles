@@ -12,7 +12,4 @@ export class BadRequestSwagger {
 
   @ApiProperty()
   messages: string | string[];
-
-  @ApiProperty({ nullable: true })
-  error?: string;
 }
