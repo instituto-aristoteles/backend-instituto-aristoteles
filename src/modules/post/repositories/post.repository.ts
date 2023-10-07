@@ -34,7 +34,10 @@ export class PostRepository {
       relations: ['createdBy', 'updatedBy', 'category'],
       skip: skip,
       take: take,
-      order: { createdAt: 'asc' },
+      where: {
+        status: filters.status,
+      },
+      order: { createdAt: 'desc' },
     });
   }
 
