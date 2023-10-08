@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PostEntity } from '@/domain/entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
 
 @Injectable()
 export class PostRepository {
@@ -25,9 +26,18 @@ export class PostRepository {
     });
   }
 
-  async getPosts(): Promise<PostEntity[]> {
+  async getPosts(filters: GetPostsFiltersDto): Promise<PostEntity[]> {
+    const take = filters.pageSize;
+    const skip = take * (filters.page - 1);
+
     return this.repository.find({
       relations: ['createdBy', 'updatedBy', 'category'],
+      skip: skip,
+      take: take,
+      where: {
+        status: filters.status,
+      },
+      order: { createdAt: 'desc' },
     });
   }
 

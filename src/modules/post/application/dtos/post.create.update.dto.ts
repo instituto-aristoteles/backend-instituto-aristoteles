@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsIn, IsOptional, IsString } from 'class-validator';
+import { PostStatus, PostStatusValues } from '@/domain/enums/post.status';
 
 export class PostCreateUpdateDTO {
   @ApiProperty()
@@ -12,27 +13,19 @@ export class PostCreateUpdateDTO {
 
   @ApiProperty()
   @IsString()
-  slug: string;
-
-  @ApiProperty()
-  @IsString()
   content: string;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, required: false })
   @IsString()
   @IsOptional()
   coverUrl?: string;
 
-  @ApiProperty()
-  @IsNumber()
-  status: number;
+  @ApiProperty({ default: 'draft' as PostStatus })
+  @IsIn(PostStatusValues)
+  status: PostStatus;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, required: false })
   @IsString()
   @IsOptional()
   categoryId?: string;
-
-  @ApiProperty()
-  @IsUUID()
-  authorId: string;
 }

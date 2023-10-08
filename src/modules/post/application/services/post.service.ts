@@ -11,6 +11,9 @@ import { UnprocessableEntityError } from '@/common/exceptions/unprocessable-enti
 import { PostRepository } from '@/modules/post/repositories/post.repository';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
+import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
+import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
+import { UserEntity } from '@/domain/entities/user.entity';
 
 @Injectable()
 export class PostService {
@@ -20,9 +23,16 @@ export class PostService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  public async getPosts(): Promise<PostReadDTO[]> {
-    const posts = await this.postRepository.getPosts();
-    return modelToDtoList(posts);
+  public async getPosts(
+    filters: GetPostsFiltersDto,
+  ): Promise<PaginatedResponse<PostReadDTO>> {
+    const posts = await this.postRepository.getPosts(filters);
+
+    return {
+      currentPage: filters.page,
+      pageSize: filters.pageSize,
+      results: modelToDtoList(posts),
+    };
   }
 
   public async findPost(id: string): Promise<PostReadDTO> {
@@ -33,15 +43,10 @@ export class PostService {
     return modelToDTO(post);
   }
 
-  public async createPost(post: PostCreateUpdateDTO): Promise<void> {
-    const author = await this.userRepository.getUser(post.authorId);
-
-    if (!author) {
-      throw new UnprocessableEntityError(
-        `Author of id ${post.authorId} not found`,
-      );
-    }
-
+  public async createPost(
+    post: PostCreateUpdateDTO,
+    user: UserEntity,
+  ): Promise<void> {
     if (post.categoryId) {
       const category = await this.categoryRepository.getCategory(
         post.categoryId,
@@ -54,25 +59,19 @@ export class PostService {
       }
     }
 
-    await this.postRepository.createPost(dtoToModel(post));
+    await this.postRepository.createPost(dtoToModel(post, user));
   }
 
   public async updatePost(
     id: string,
     post: PostCreateUpdateDTO,
+    user: UserEntity,
   ): Promise<void> {
     const postEntity = await this.postRepository.findPost(id);
     if (!postEntity) {
       throw new NotFoundError('Post not found.');
     }
 
-    const author = await this.userRepository.getUser(post.authorId);
-    if (!author) {
-      throw new UnprocessableEntityError(
-        `Author of id ${post.authorId} not found`,
-      );
-    }
-
     if (post.categoryId) {
       const category = await this.categoryRepository.getCategory(
         post.categoryId,
@@ -85,7 +84,7 @@ export class PostService {
       }
     }
 
-    await this.postRepository.updatePost(dtoToModel(post, postEntity));
+    await this.postRepository.updatePost(dtoToModel(post, user, postEntity));
   }
 
   public async deletePost(id: string): Promise<void> {

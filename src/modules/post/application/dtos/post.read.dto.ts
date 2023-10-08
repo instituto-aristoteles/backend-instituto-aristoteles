@@ -1,6 +1,7 @@
 import { UserReadDto } from '@/modules/user/application/dtos/user.read.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { ReadCategoryDto } from '@/modules/category/application/dtos/read-category.dto';
+import { PostStatus } from '@/domain/enums/post.status';
 
 export class PostReadDTO {
   @ApiProperty()
@@ -19,7 +20,7 @@ export class PostReadDTO {
   content: string;
 
   @ApiProperty()
-  status: number;
+  status: PostStatus;
 
   @ApiProperty()
   createdBy: Pick<UserReadDto, 'id' | 'name' | 'email'>;
