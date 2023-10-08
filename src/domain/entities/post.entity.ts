@@ -1,8 +1,8 @@
-import { PostStatusEnum } from '@/domain/enums/post-status.enum';
+import { PostStatus } from '@/domain/enums/post.status';
 import { EntityBase } from '@/common/base/entity.base';
 import { UserEntity } from '@/domain/entities/user.entity';
 import { CategoryEntity } from '@/domain/entities/category.entity';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'Post' })
 export class PostEntity extends EntityBase<PostEntity> {
@@ -12,7 +12,7 @@ export class PostEntity extends EntityBase<PostEntity> {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ unique: true })
   slug: string;
 
   @Column()
@@ -27,8 +27,8 @@ export class PostEntity extends EntityBase<PostEntity> {
   @Column({ nullable: true })
   categoryId?: string;
 
-  @Column()
-  status: PostStatusEnum;
+  @Column({ default: 'draft' as PostStatus })
+  status: PostStatus;
 
   @Column()
   createdById: string;
@@ -38,6 +38,7 @@ export class PostEntity extends EntityBase<PostEntity> {
 
   @ManyToOne(() => UserEntity, (user) => user.id)
   createdBy?: UserEntity;
+
   @ManyToOne(() => UserEntity, (user) => user.id)
   updatedBy?: UserEntity;
 }

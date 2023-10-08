@@ -25,6 +25,8 @@ import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
 import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserEntity } from '@/domain/entities/user.entity';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -80,8 +82,11 @@ export class PostController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async createPost(@Body() post: PostCreateUpdateDTO) {
-    await this.postService.createPost(post);
+  public async createPost(
+    @Body() post: PostCreateUpdateDTO,
+    @CurrentUser() user: UserEntity,
+  ) {
+    await this.postService.createPost(post, user);
   }
 
   @Put(':id')
@@ -105,8 +110,9 @@ export class PostController {
   public async updatePost(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() post: PostCreateUpdateDTO,
+    @CurrentUser() user: UserEntity,
   ) {
-    await this.postService.updatePost(id, post);
+    await this.postService.updatePost(id, post, user);
   }
 
   @Delete(':id')

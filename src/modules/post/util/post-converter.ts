@@ -1,6 +1,8 @@
 import { PostReadDTO } from '@/modules/post/application/dtos/post.read.dto';
 import { PostEntity } from '@/domain/entities/post.entity';
 import { PostCreateUpdateDTO } from '@/modules/post/application/dtos/post.create.update.dto';
+import slugify from 'slugify';
+import { UserEntity } from '@/domain/entities/user.entity';
 
 export function modelToDTO(entity: PostEntity): PostReadDTO {
   return {
@@ -30,23 +32,23 @@ export function modelToDtoList(entityList: PostEntity[]): PostReadDTO[] {
 
 export function dtoToModel(
   dto: PostCreateUpdateDTO,
+  author: UserEntity,
   updated?: PostEntity,
 ): PostEntity {
-  const isUpdate = !!updated;
   const currentDate = new Date();
 
   return {
     id: updated?.id,
     title: dto.title,
     description: dto.description,
-    slug: dto.slug,
+    slug: slugify(dto.title, { lower: true }),
     content: dto.content,
     coverUrl: dto.coverUrl,
     status: dto.status,
     categoryId: dto.categoryId,
     createdAt: updated?.createdAt ?? currentDate,
-    updatedAt: isUpdate ? currentDate : currentDate,
-    createdById: updated?.createdById ?? dto.authorId,
-    updatedById: dto.authorId,
+    updatedAt: currentDate,
+    createdById: updated?.createdById ?? author.id,
+    updatedById: author.id,
   };
 }

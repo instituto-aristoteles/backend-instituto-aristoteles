@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsOptional } from 'class-validator';
+import { IsIn, IsInt, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { PostStatus, PostStatusValues } from '@/domain/enums/post.status';
 
 export class GetPostsFiltersDto {
   @ApiProperty({ default: 10 })
@@ -13,9 +14,8 @@ export class GetPostsFiltersDto {
   @Type(() => Number)
   page: number;
 
-  @ApiProperty({ nullable: true, required: false })
+  @ApiProperty({ nullable: true, required: false, enum: PostStatusValues })
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  status?: number;
+  @IsIn(PostStatusValues)
+  status?: PostStatus;
 }
