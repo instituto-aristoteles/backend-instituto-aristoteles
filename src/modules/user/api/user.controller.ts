@@ -64,11 +64,13 @@ export class UserController {
   })
   @ApiBearerAuth()
   public async getCurrentUser(
-    @CurrentUser() user: Pick<UserEntity, 'id' | 'name' | 'email' | 'avatar'>,
+    @CurrentUser()
+    user: Pick<UserEntity, 'id' | 'name' | 'email' | 'avatar' | 'username'>,
   ): Promise<UserReadDto> {
     return {
       id: user.id,
       name: user.name,
+      username: user.username,
       email: user.email,
       avatar: user.avatar,
     };

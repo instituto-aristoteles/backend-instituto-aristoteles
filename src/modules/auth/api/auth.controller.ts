@@ -34,7 +34,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Email e/ou senha incorretos',
+    description: 'Usuário e/ou senha incorretos',
     type: UnauthorizedSwagger,
   })
   @ApiResponse({
