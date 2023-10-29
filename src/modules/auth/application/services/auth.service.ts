@@ -116,9 +116,7 @@ export class AuthService {
 
     const exp = this.jwtService.decode(accessToken)['exp'];
     return {
-      expiresIn: new Date(exp * 1000).toLocaleString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-      }),
+      expiresIn: new Date(exp * 1000).toISOString(),
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
