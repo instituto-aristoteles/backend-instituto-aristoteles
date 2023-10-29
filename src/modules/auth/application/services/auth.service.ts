@@ -26,10 +26,10 @@ export class AuthService {
   }
 
   async validateUser(
-    email: string,
+    username: string,
     password: string,
-  ): Promise<Omit<UserEntity, 'postsUpdated' | 'postsCreated'>> {
-    const user = await this.userRepository.getUserByEmail(email);
+  ): Promise<Omit<UserEntity, 'postsUpdated' | 'postsCreated' | 'password'>> {
+    const user = await this.userRepository.getByUsername(username);
 
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -39,7 +39,7 @@ export class AuthService {
           id: user.id,
           name: user.name,
           email: user.email,
-          password: undefined,
+          username: user.username,
           refreshToken: user.refreshToken,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
@@ -47,9 +47,7 @@ export class AuthService {
       }
     }
 
-    throw new UnauthorizedError(
-      'Email address or password provided is incorrect.',
-    );
+    throw new UnauthorizedError('Username or password provided is incorrect.');
   }
 
   private async verifyRefreshToken(
@@ -71,11 +69,11 @@ export class AuthService {
       throw new UnauthorizedError(e.name);
     }
 
-    const email = this.jwtService.decode(body.refreshToken)['email'];
-    if (!email)
+    const username = this.jwtService.decode(body.refreshToken)['username'];
+    if (!username)
       throw new NotFoundError('User not found or refresh token is invalid.');
 
-    const user = await this.userRepository.getUserByEmail(email);
+    const user = await this.userRepository.getByUsername(username);
     if (!user) throw new NotFoundError('User not found');
 
     return user;
@@ -101,11 +99,11 @@ export class AuthService {
   private async getTokens(user: UserEntity): Promise<UserTokenWithRefresh> {
     const jwtPayload: UserPayload = {
       sub: user.id,
-      email: user.email,
+      username: user.username,
       name: user.name,
     };
 
-    const [access_token, refresh_token] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(jwtPayload, {
         secret: process.env.JWT_SECRET,
         expiresIn: '8h',
@@ -116,9 +114,13 @@ export class AuthService {
       }),
     ]);
 
+    const exp = this.jwtService.decode(accessToken)['exp'];
     return {
-      access_token: access_token,
-      refreshToken: refresh_token,
+      expiresIn: new Date(exp * 1000).toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+      }),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 }

@@ -8,6 +8,9 @@ export class UserReadDto {
   name: string;
 
   @ApiProperty()
+  username: string;
+
+  @ApiProperty()
   email: string;
 
   @ApiProperty({ nullable: true })

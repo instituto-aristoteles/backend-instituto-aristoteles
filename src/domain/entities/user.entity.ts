@@ -10,8 +10,11 @@ export class UserEntity extends EntityBase<UserEntity> {
   @Column({ nullable: true })
   avatar?: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
+
+  @Column({ unique: true })
+  username: string;
 
   @Column()
   password: string;
