@@ -11,7 +11,10 @@ export class UserRepository {
   ) {}
 
   async createUser(
-    entity: Pick<UserEntity, 'name' | 'email' | 'password' | 'avatar'>,
+    entity: Pick<
+      UserEntity,
+      'name' | 'email' | 'username' | 'password' | 'avatar'
+    >,
   ): Promise<void> {
     await this.repository.save(entity);
   }
@@ -32,8 +35,10 @@ export class UserRepository {
     await this.repository.update(id, entity);
   }
 
-  async getUserByEmail(email: string): Promise<UserEntity> {
-    return this.repository.findOne({ where: { email: email } });
+  async getByUsername(usernameOrEmail: string): Promise<UserEntity> {
+    return this.repository.findOne({
+      where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    });
   }
 
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {

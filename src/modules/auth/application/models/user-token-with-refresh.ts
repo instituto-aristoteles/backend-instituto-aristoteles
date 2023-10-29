@@ -6,5 +6,8 @@ export class UserTokenWithRefresh implements UserToken {
   refreshToken: string;
 
   @ApiProperty()
-  access_token: string;
+  accessToken: string;
+
+  @ApiProperty()
+  expiresIn: string;
 }
