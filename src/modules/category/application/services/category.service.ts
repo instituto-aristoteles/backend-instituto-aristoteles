@@ -5,6 +5,7 @@ import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { NotFoundError } from '@/common/exceptions/not-found.error';
 import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
+import { BulkDeleteCategoryDto } from '@/modules/category/application/dtos/bulk-delete-category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -62,5 +63,9 @@ export class CategoryService {
       slug: slugify(entity.title, { lower: true }),
       createdAt: undefined,
     });
+  }
+
+  public async bulkDeleteCategory(categoryIds: BulkDeleteCategoryDto) {
+    await this.repository.bulkDeleteCategory(categoryIds.ids);
   }
 }
