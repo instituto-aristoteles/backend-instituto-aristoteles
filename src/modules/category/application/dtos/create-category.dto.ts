@@ -5,8 +5,4 @@ export class CreateCategoryDto {
   @ApiProperty()
   @IsNotEmpty()
   title: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  slug: string;
 }

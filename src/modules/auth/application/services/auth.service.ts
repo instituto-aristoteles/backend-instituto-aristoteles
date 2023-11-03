@@ -39,6 +39,7 @@ export class AuthService {
           id: user.id,
           name: user.name,
           email: user.email,
+          avatar: user.avatar,
           username: user.username,
           refreshToken: user.refreshToken,
           createdAt: user.createdAt,
@@ -99,8 +100,10 @@ export class AuthService {
   private async getTokens(user: UserEntity): Promise<UserTokenWithRefresh> {
     const jwtPayload: UserPayload = {
       sub: user.id,
-      username: user.username,
       name: user.name,
+      preferred_username: user.username,
+      email: user.email,
+      picture: user.avatar,
     };
 
     const [accessToken, refreshToken] = await Promise.all([

@@ -23,11 +23,13 @@ import { ReadCategoryDto } from '../application/dtos/read-category.dto';
 import { CreateCategoryDto } from '../application/dtos/create-category.dto';
 import { UpdateCategoryDto } from '../application/dtos/update-category.dto';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
+import { BulkDeleteCategoryDto } from '@/modules/category/application/dtos/bulk-delete-category.dto';
 
 @Controller('categories')
 @ApiTags('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
+
   @Get()
   @IsPublic()
   @HttpCode(200)
@@ -93,6 +95,28 @@ export class CategoryController {
     await this.categoryService.createCategory(category);
   }
 
+  @Delete('bulk-delete')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Remove uma lista de categorias' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista removida com sucesso',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar remover uma categoria sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async bulkDeleteCategory(@Body() ids: BulkDeleteCategoryDto) {
+    await this.categoryService.bulkDeleteCategory(ids);
+  }
+
   @Delete(':id')
   @HttpCode(200)
   @ApiOperation({ summary: 'Remove uma categoria' })
@@ -102,7 +126,7 @@ export class CategoryController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar uma categoria sem estar logado',
+    description: 'Ocorre ao tentar remover uma categoria sem estar logado',
     type: UnauthorizedSwagger,
   })
   @ApiResponse({
@@ -126,7 +150,7 @@ export class CategoryController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Ocorre ao tentar criar uma categoria sem estar logado',
+    description: 'Ocorre ao tentar atualizar uma categoria sem estar logado',
     type: UnauthorizedSwagger,
   })
   @ApiResponse({
