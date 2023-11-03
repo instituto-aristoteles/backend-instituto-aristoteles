@@ -4,7 +4,6 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
-import { UnprocessableEntityError } from '@/common/exceptions/unprocessable-entity.error';
 
 @Injectable()
 export class UserService {
@@ -34,13 +33,6 @@ export class UserService {
   }
 
   public async createUser(user: CreateUserDto): Promise<void> {
-    const userNameDb = await this.userRepository.getByUsername(user.username);
-    if (userNameDb)
-      throw new UnprocessableEntityError('Username already exists.');
-
-    const emailDb = await this.userRepository.getByUsername(user.email);
-    if (emailDb) throw new UnprocessableEntityError('Email already exists.');
-
     await this.userRepository.createUser({
       name: user.name,
       email: user.email,

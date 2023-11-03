@@ -7,7 +7,7 @@ export class CategoryEntity extends EntityBase<CategoryEntity> {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ unique: true })
   slug: string;
 
   @OneToMany(() => PostEntity, (post) => post.category)
