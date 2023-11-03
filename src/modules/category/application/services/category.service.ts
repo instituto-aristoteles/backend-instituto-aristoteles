@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import slugify from 'slugify';
 import { ReadCategoryDto } from '../dtos/read-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
@@ -10,7 +11,10 @@ export class CategoryService {
   constructor(private readonly repository: CategoryRepository) {}
 
   public async createCategory(category: CreateCategoryDto): Promise<void> {
-    await this.repository.createCategory(category);
+    await this.repository.createCategory({
+      title: category.title,
+      slug: slugify(category.title, { lower: true }),
+    });
   }
 
   public async deleteCategory(id: string): Promise<void> {
@@ -55,7 +59,7 @@ export class CategoryService {
 
     await this.repository.updateCategory(id, {
       title: entity.title,
-      slug: entity.slug,
+      slug: slugify(entity.title, { lower: true }),
       createdAt: undefined,
     });
   }
