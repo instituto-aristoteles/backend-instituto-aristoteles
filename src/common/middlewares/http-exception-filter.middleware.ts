@@ -7,11 +7,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ErrorBase } from '@/common/base/error.base';
 
 type ResponseData = {
   statusCode: number;
   timestamp: string;
   path: string;
+  type?: string;
   messages: string | string[];
 };
 
@@ -36,6 +38,7 @@ export class HttpExceptionFilterMiddleware implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       messages: messages,
+      type: (exception as ErrorBase).type,
     };
 
     this.logMessages(
@@ -54,13 +57,13 @@ export class HttpExceptionFilterMiddleware implements ExceptionFilter {
   ) {
     if (response.statusCode === 500) {
       Logger.error(
-        `method: ${method} | statusCode: ${response.statusCode} | messages: ${response.messages}`,
+        `method: ${method} | statusCode: ${response.statusCode} | messages: ${response.messages} | type: ${response.type}`,
         `End request for: ${response.path}`,
         response.statusCode >= 500 ? exception : '',
       );
     } else {
       Logger.warn(
-        `method: ${method} | statusCode: ${response.statusCode} | messages: ${response.messages}`,
+        `method: ${method} | statusCode: ${response.statusCode} | messages: ${response.messages} | type: ${response.type}`,
         `End request for: ${response.path}`,
         '',
       );

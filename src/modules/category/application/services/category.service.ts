@@ -3,9 +3,9 @@ import slugify from 'slugify';
 import { ReadCategoryDto } from '../dtos/read-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
-import { NotFoundError } from '@/common/exceptions/not-found.error';
 import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
 import { BulkDeleteCategoryDto } from '@/modules/category/application/dtos/bulk-delete-category.dto';
+import { CategoryNotFoundError } from '@/common/exceptions/category-not-found.error';
 
 @Injectable()
 export class CategoryService {
@@ -20,7 +20,7 @@ export class CategoryService {
 
   public async deleteCategory(id: string): Promise<void> {
     const category = await this.repository.getCategory(id);
-    if (!category) throw new NotFoundError('Category not found.');
+    if (!category) throw new CategoryNotFoundError('Category not found.');
 
     await this.repository.deleteCategory(id);
   }
@@ -40,7 +40,7 @@ export class CategoryService {
 
   public async getCategory(id: string): Promise<ReadCategoryDto> {
     const category = await this.repository.getCategory(id);
-    if (!category) throw new NotFoundError('Category not found');
+    if (!category) throw new CategoryNotFoundError('Category not found');
 
     return {
       id: category.id,
@@ -56,7 +56,7 @@ export class CategoryService {
     entity: UpdateCategoryDto,
   ): Promise<void> {
     const category = await this.repository.getCategory(id);
-    if (!category) throw new NotFoundError('Category not found.');
+    if (!category) throw new CategoryNotFoundError('Category not found.');
 
     await this.repository.updateCategory(id, {
       title: entity.title,

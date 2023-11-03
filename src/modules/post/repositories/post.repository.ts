@@ -3,6 +3,8 @@ import { PostEntity } from '@/domain/entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
+import { DatabaseError } from '@/common/exceptions/database.error';
+import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
 
 @Injectable()
 export class PostRepository {
@@ -11,8 +13,20 @@ export class PostRepository {
     private readonly repository: Repository<PostEntity>,
   ) {}
 
-  async createPost(newPost: Omit<PostEntity, 'id'>) {
-    await this.repository.save(newPost);
+  async createPost(entity: Omit<PostEntity, 'id'>) {
+    try {
+      await this.repository.save(entity);
+    } catch (e) {
+      if (e.name === 'QueryFailedError') {
+        if (e.code == '23505') {
+          throw new DuplicatedKeyError(e.detail);
+        }
+
+        throw new DatabaseError(e.name);
+      }
+
+      throw new DatabaseError(e.name);
+    }
   }
 
   async deletePost(id: string) {

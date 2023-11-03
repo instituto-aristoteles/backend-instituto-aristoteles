@@ -6,7 +6,6 @@ import {
   modelToDTO,
   modelToDtoList,
 } from '@/modules/post/util/post-converter';
-import { NotFoundError } from '@/common/exceptions/not-found.error';
 import { UnprocessableEntityError } from '@/common/exceptions/unprocessable-entity.error';
 import { PostRepository } from '@/modules/post/repositories/post.repository';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
@@ -14,6 +13,7 @@ import { CategoryRepository } from '@/modules/category/repositories/category.rep
 import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
 import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
 import { UserEntity } from '@/domain/entities/user.entity';
+import { PostNotFoundError } from '@/common/exceptions/post-not-found.error';
 
 @Injectable()
 export class PostService {
@@ -38,7 +38,7 @@ export class PostService {
   public async findPost(id: string): Promise<PostReadDTO> {
     const post = await this.postRepository.findPost(id);
 
-    if (!post) throw new NotFoundError(`Post ${id} not found`);
+    if (!post) throw new PostNotFoundError(`Post ${id} not found`);
 
     return modelToDTO(post);
   }
@@ -55,6 +55,7 @@ export class PostService {
       if (!category) {
         throw new UnprocessableEntityError(
           `Category of id ${post.categoryId} not found`,
+          'category_not_found',
         );
       }
     }
@@ -69,7 +70,7 @@ export class PostService {
   ): Promise<void> {
     const postEntity = await this.postRepository.findPost(id);
     if (!postEntity) {
-      throw new NotFoundError('Post not found.');
+      throw new PostNotFoundError('Post not found.');
     }
 
     if (post.categoryId) {
@@ -80,6 +81,7 @@ export class PostService {
       if (!category) {
         throw new UnprocessableEntityError(
           `Category of id ${post.categoryId} not found`,
+          'category_not_found',
         );
       }
     }
@@ -91,7 +93,7 @@ export class PostService {
     const postEntity = await this.postRepository.findPost(id);
 
     if (!postEntity) {
-      throw new NotFoundError('Post not found.');
+      throw new PostNotFoundError('Post not found.');
     }
 
     await this.postRepository.deletePost(postEntity.id);

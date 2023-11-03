@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@/domain/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { DatabaseError } from '@/common/exceptions/database.error';
+import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
 
 @Injectable()
 export class UserRepository {
@@ -16,7 +18,19 @@ export class UserRepository {
       'name' | 'email' | 'username' | 'password' | 'avatar'
     >,
   ): Promise<void> {
-    await this.repository.save(entity);
+    try {
+      await this.repository.save(entity);
+    } catch (e) {
+      if (e.name === 'QueryFailedError') {
+        if (e.code == '23505') {
+          throw new DuplicatedKeyError(e.detail);
+        }
+
+        throw new DatabaseError(e.name);
+      }
+
+      throw new DatabaseError(e.name);
+    }
   }
 
   async deleteUser(id: string): Promise<void> {

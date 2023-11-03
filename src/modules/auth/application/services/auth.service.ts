@@ -3,13 +3,15 @@ import { JwtService } from '@nestjs/jwt';
 import { UserPayload } from '../models/user-payload';
 
 import * as bcrypt from 'bcrypt';
-import { UnauthorizedError } from '@/common/exceptions/unauthorized.error';
 import { UserTokenWithRefresh } from '../models/user-token-with-refresh';
 import * as process from 'process';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { UserEntity } from '@/domain/entities/user.entity';
 import { RefreshTokenBody } from '@/modules/auth/application/models/refresh-token-body';
-import { NotFoundError } from '@/common/exceptions/not-found.error';
+import { InvalidTokenError } from '@/common/exceptions/invalid-token.error';
+import { TokenExpiredError } from '@/common/exceptions/token-expired.error';
+import { UserNotFoundError } from '@/common/exceptions/user-not-found.error';
+import { UserError } from '@/common/exceptions/user.error';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +50,7 @@ export class AuthService {
       }
     }
 
-    throw new UnauthorizedError('Username or password provided is incorrect.');
+    throw new UserError('Username or password provided is incorrect.');
   }
 
   private async verifyRefreshToken(
@@ -60,22 +62,24 @@ export class AuthService {
       });
     } catch (e: any) {
       if (e.name === 'JsonWebTokenError' || e.name === 'SyntaxError') {
-        throw new UnauthorizedError('Invalid signature');
+        throw new InvalidTokenError('Invalid signature');
       }
 
       if (e.name === 'TokenExpiredError') {
-        throw new UnauthorizedError('Expired token');
+        throw new TokenExpiredError('Expired token');
       }
 
-      throw new UnauthorizedError(e.name);
+      throw new InvalidTokenError(e.name);
     }
 
     const username = this.jwtService.decode(body.refreshToken)['username'];
     if (!username)
-      throw new NotFoundError('User not found or refresh token is invalid.');
+      throw new UserNotFoundError(
+        'User not found or refresh token is invalid.',
+      );
 
     const user = await this.userRepository.getByUsername(username);
-    if (!user) throw new NotFoundError('User not found');
+    if (!user) throw new UserNotFoundError('User not found');
 
     return user;
   }
