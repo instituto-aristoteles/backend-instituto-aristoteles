@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseError } from '@/common/exceptions/database.error';
 import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
+import { UserStatus, UserStatusValues } from '@/domain/enums/user-status';
 
 @Injectable()
 export class UserRepository {
@@ -15,7 +16,7 @@ export class UserRepository {
   async createUser(
     entity: Pick<
       UserEntity,
-      'name' | 'email' | 'username' | 'password' | 'avatar'
+      'name' | 'email' | 'username' | 'password' | 'avatar' | 'role'
     >,
   ): Promise<void> {
     try {
@@ -57,5 +58,13 @@ export class UserRepository {
 
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
     await this.repository.update(id, { refreshToken: refreshToken });
+  }
+
+  async updatePassword(
+    id: string,
+    password: string,
+    status: UserStatus,
+  ): Promise<void> {
+    await this.repository.update(id, { password: password, status: status });
   }
 }

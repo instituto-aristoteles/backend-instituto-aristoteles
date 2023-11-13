@@ -40,6 +40,8 @@ export class AuthService {
         return {
           id: user.id,
           name: user.name,
+          role: user.role,
+          status: user.status,
           email: user.email,
           avatar: user.avatar,
           username: user.username,
@@ -106,6 +108,7 @@ export class AuthService {
       sub: user.id,
       name: user.name,
       preferred_username: user.username,
+      role: user.role,
       email: user.email,
       picture: user.avatar,
     };

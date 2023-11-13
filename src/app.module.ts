@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { CategoryModule } from './modules/category/category.module';
 import { DatabaseModule } from '@/database/typeorm/database.module';
 import { HealthModule } from '@/modules/health/health.module';
+import { RolesGuard } from '@/common/guards/roles.guard';
 
 @Module({
   imports: [
@@ -37,6 +38,10 @@ import { HealthModule } from '@/modules/health/health.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

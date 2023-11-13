@@ -24,6 +24,8 @@ import { CreateCategoryDto } from '../application/dtos/create-category.dto';
 import { UpdateCategoryDto } from '../application/dtos/update-category.dto';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 import { BulkDeleteCategoryDto } from '@/modules/category/application/dtos/bulk-delete-category.dto';
+import { Roles } from '@/common/decorators/user-role.decorator';
+import { UserRole } from '@/domain/enums/user-role';
 
 @Controller('categories')
 @ApiTags('categories')
@@ -72,6 +74,7 @@ export class CategoryController {
   }
 
   @Post()
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(201)
   @ApiOperation({ summary: 'Cria uma categoria' })
   @ApiResponse({
@@ -96,6 +99,7 @@ export class CategoryController {
   }
 
   @Delete('bulk-delete')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({ summary: 'Remove uma lista de categorias' })
   @ApiResponse({
@@ -118,6 +122,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({ summary: 'Remove uma categoria' })
   @ApiResponse({
@@ -142,6 +147,7 @@ export class CategoryController {
   }
 
   @Put(':id')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({ summary: 'Atualiza uma categoria' })
   @ApiResponse({

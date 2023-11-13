@@ -27,6 +27,8 @@ import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.fi
 import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { UserEntity } from '@/domain/entities/user.entity';
+import { Roles } from '@/common/decorators/user-role.decorator';
+import { UserRole } from '@/domain/enums/user-role';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -65,6 +67,7 @@ export class PostController {
   }
 
   @Post()
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(201)
   @ApiOperation({ summary: 'Criação de um artigo' })
   @ApiResponse({
@@ -90,6 +93,7 @@ export class PostController {
   }
 
   @Put(':id')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({ summary: 'Atualiza um artigo' })
   @ApiResponse({
@@ -116,6 +120,7 @@ export class PostController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({ summary: 'Remove um artigo' })
   @ApiResponse({
