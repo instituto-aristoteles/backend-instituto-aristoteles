@@ -20,10 +20,11 @@ import {
 } from '@nestjs/swagger';
 import { UnauthorizedSwagger } from '@/common/swagger/unauthorized.swagger';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
-import { IsPublic } from '@/common/decorators/is-public.decorator';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 import { UseInterceptors } from '@nestjs/common/decorators/core/use-interceptors.decorator';
 import { CurrentUserInterceptor } from '@/common/interceptors/current-user.interceptor';
+import { Roles } from '@/common/decorators/user-role.decorator';
+import { UserRole } from '@/domain/enums/user-role';
 
 @Controller('users')
 @ApiTags('users')
@@ -32,6 +33,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Roles(UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({ summary: 'Lista todos os usuários' })
   @ApiResponse({
@@ -65,7 +67,10 @@ export class UserController {
   @ApiBearerAuth()
   public async getCurrentUser(
     @CurrentUser()
-    user: Pick<UserEntity, 'id' | 'name' | 'email' | 'avatar' | 'username'>,
+    user: Pick<
+      UserEntity,
+      'id' | 'name' | 'email' | 'avatar' | 'username' | 'role' | 'status'
+    >,
   ): Promise<UserReadDto> {
     return {
       id: user.id,
@@ -73,10 +78,13 @@ export class UserController {
       username: user.username,
       email: user.email,
       avatar: user.avatar,
+      role: user.role,
+      status: user.status,
     };
   }
 
   @Get(':id')
+  @Roles(UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({ summary: 'Busca um usuário pelo ID' })
   @ApiResponse({
@@ -101,8 +109,8 @@ export class UserController {
     return this.userService.getUser(id);
   }
 
-  @IsPublic()
   @Post()
+  @Roles(UserRole.Admin)
   @HttpCode(201)
   @ApiOperation({ summary: 'Cria um usuário' })
   @ApiResponse({

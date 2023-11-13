@@ -6,6 +6,8 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserStatus } from '@/domain/enums/user-status';
+import { UserRole } from '@/domain/enums/user-role';
 
 export class CreateUserDto {
   @IsString()
@@ -31,4 +33,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   avatar?: string;
+
+  @ApiProperty()
+  @IsString()
+  role: UserRole;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  status: UserStatus;
 }

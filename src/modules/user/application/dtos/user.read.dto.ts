@@ -15,4 +15,10 @@ export class UserReadDto {
 
   @ApiProperty({ nullable: true })
   avatar?: string;
+
+  @ApiProperty()
+  role: string;
+
+  @ApiProperty()
+  status: string;
 }
