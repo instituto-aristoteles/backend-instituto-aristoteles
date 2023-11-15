@@ -60,11 +60,15 @@ export class UserRepository {
     await this.repository.update(id, { refreshToken: refreshToken });
   }
 
-  async updatePassword(
+  async activateUser(
     id: string,
     password: string,
     status: UserStatus,
   ): Promise<void> {
     await this.repository.update(id, { password: password, status: status });
+  }
+
+  async updatePassword(id: string, password: string) {
+    await this.repository.update(id, { password: password });
   }
 }
