@@ -4,7 +4,6 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilterMiddleware } from '@/common/middlewares/http-exception-filter.middleware';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { UserService } from '@/modules/user/application/services/user.service';
 
 async function bootstrap(): Promise<string> {
   const port = parseInt(process.env.APP_PORT, 10) || 3000;

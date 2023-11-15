@@ -5,6 +5,9 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { UserEntity } from '@/domain/entities/user.entity';
+import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
+import { UserNotFoundError } from '@/common/exceptions/user-not-found.error';
+import { InvalidUserPasswordError } from '@/common/exceptions/invalid-user-password.error';
 
 @Injectable()
 export class UserService {
@@ -50,7 +53,23 @@ export class UserService {
     });
   }
 
-  public async updateUserPassword(user: UserEntity): Promise<void> {
-    await this.userRepository.updatePassword('', '', 'confirmed');
+  public async updateUserPassword(
+    id: string,
+    oldAndNewPassword: UpdateUserPasswordDto,
+  ): Promise<void> {
+    const user = await this.userRepository.getUser(id);
+    if (!user) throw new UserNotFoundError(`User not found with id ${id}`);
+
+    const isValidPassword = await bcrypt.compare(
+      oldAndNewPassword.oldPassword,
+      user.password,
+    );
+
+    if (!isValidPassword)
+      throw new InvalidUserPasswordError('Please enter correct old password');
+
+    const hashPassword = await bcrypt.hash(oldAndNewPassword.newPassword, 10);
+
+    await this.userRepository.updatePassword(id, hashPassword, 'confirmed');
   }
 }

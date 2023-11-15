@@ -10,6 +10,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { DatabaseModule } from '@/database/typeorm/database.module';
 import { HealthModule } from '@/modules/health/health.module';
 import { RolesGuard } from '@/common/guards/roles.guard';
+import { UserStatusGuard } from '@/common/guards/user-status.guard';
 
 @Module({
   imports: [
@@ -42,6 +43,10 @@ import { RolesGuard } from '@/common/guards/roles.guard';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: UserStatusGuard,
     },
   ],
 })

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseError } from '@/common/exceptions/database.error';
 import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
-import { UserStatus, UserStatusValues } from '@/domain/enums/user-status';
+import { UserStatus } from '@/domain/enums/user-status';
 
 @Injectable()
 export class UserRepository {
