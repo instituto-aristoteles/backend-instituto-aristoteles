@@ -6,6 +6,8 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '@/modules/user/application/services/user.service';
 import { CreateUserDto } from '../application/dtos/create-user.dto';
@@ -25,6 +27,9 @@ import { UseInterceptors } from '@nestjs/common/decorators/core/use-interceptors
 import { CurrentUserInterceptor } from '@/common/interceptors/current-user.interceptor';
 import { Roles } from '@/common/decorators/user-role.decorator';
 import { UserRole } from '@/domain/enums/user-role';
+import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
+import { UserStatusType } from '@/common/decorators/user-status-type.decorator';
+import { UserStatusGuard } from '@/common/guards/user-status.guard';
 
 @Controller('users')
 @ApiTags('users')
@@ -130,5 +135,40 @@ export class UserController {
   @ApiBearerAuth()
   public async createUser(@Body() user: CreateUserDto): Promise<void> {
     await this.userService.createUser(user);
+  }
+
+  @Put(':id/activate-user')
+  @HttpCode(201)
+  @UseGuards(UserStatusGuard)
+  @UserStatusType('confirmed')
+  @ApiOperation({
+    summary: 'Atualiza a senha do usuário com status "Não Confirmado"',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Senha atualizada e usuário ativado com sucesso',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar atualizar um usuário sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Ocorre ao tentar acessar o endpoint com um usuário já confirmado',
+    type: BadRequestSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async updateUserPassword(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() oldAndNewPassword: UpdateUserPasswordDto,
+  ): Promise<void> {
+    await this.userService.updateUserPassword(id, oldAndNewPassword);
   }
 }

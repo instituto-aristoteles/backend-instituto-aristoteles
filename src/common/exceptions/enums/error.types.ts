@@ -8,6 +8,7 @@ export const ErrorTypesValues = [
   'post_not_found',
   'category_not_found',
   'user_not_logged_in',
+  'incorrect_password',
 ] as const;
 
 export type ErrorTypes = (typeof ErrorTypesValues)[number];

@@ -109,6 +109,7 @@ export class AuthService {
       name: user.name,
       preferred_username: user.username,
       role: user.role,
+      status: user.status,
       email: user.email,
       picture: user.avatar,
     };
