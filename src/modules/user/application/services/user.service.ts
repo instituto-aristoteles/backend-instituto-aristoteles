@@ -4,7 +4,6 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
-import { UserEntity } from '@/domain/entities/user.entity';
 import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
 import { UserNotFoundError } from '@/common/exceptions/user-not-found.error';
 import { InvalidUserPasswordError } from '@/common/exceptions/invalid-user-password.error';
@@ -53,10 +52,28 @@ export class UserService {
     });
   }
 
-  public async updateUserPassword(
+  public async activateUser(
     id: string,
     oldAndNewPassword: UpdateUserPasswordDto,
   ): Promise<void> {
+    const password = await this.getUserPassword(id, oldAndNewPassword);
+
+    await this.userRepository.activateUser(id, password, 'confirmed');
+  }
+
+  public async updateUserPassword(
+    id: string,
+    oldAndNewPassword: UpdateUserPasswordDto,
+  ) {
+    const password = await this.getUserPassword(id, oldAndNewPassword);
+
+    await this.userRepository.updatePassword(id, password);
+  }
+
+  private async getUserPassword(
+    id: string,
+    oldAndNewPassword: UpdateUserPasswordDto,
+  ) {
     const user = await this.userRepository.getUser(id);
     if (!user) throw new UserNotFoundError(`User not found with id ${id}`);
 
@@ -68,8 +85,6 @@ export class UserService {
     if (!isValidPassword)
       throw new InvalidUserPasswordError('Please enter correct old password');
 
-    const hashPassword = await bcrypt.hash(oldAndNewPassword.newPassword, 10);
-
-    await this.userRepository.updatePassword(id, hashPassword, 'confirmed');
+    return await bcrypt.hash(oldAndNewPassword.newPassword, 10);
   }
 }

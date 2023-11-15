@@ -140,9 +140,9 @@ export class UserController {
   @Put(':id/activate-user')
   @HttpCode(201)
   @UseGuards(UserStatusGuard)
-  @UserStatusType('confirmed')
+  @UserStatusType('unconfirmed')
   @ApiOperation({
-    summary: 'Atualiza a senha do usuário com status "Não Confirmado"',
+    summary: 'Atualiza a senha e ativa o usuário com status "Não Confirmado"',
   })
   @ApiResponse({
     status: 201,
@@ -169,6 +169,35 @@ export class UserController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() oldAndNewPassword: UpdateUserPasswordDto,
   ): Promise<void> {
+    await this.userService.activateUser(id, oldAndNewPassword);
+  }
+
+  @Put(':id')
+  @HttpCode(201)
+  @UseGuards(UserStatusGuard)
+  @UserStatusType('confirmed')
+  @ApiOperation({
+    summary: 'Atualiza a senha do usuário',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Senha atualizada e usuário ativado com sucesso',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar atualizar um usuário sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async updatePassword(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() oldAndNewPassword: UpdateUserPasswordDto,
+  ) {
     await this.userService.updateUserPassword(id, oldAndNewPassword);
   }
 }

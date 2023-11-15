@@ -20,7 +20,7 @@ export class UserStatusGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<AuthRequest>();
     if (!status.some((value) => request.user.status === value))
       throw new ForbiddenException(
-        'Only users with `unconfirmed` status can use this endpoint.',
+        `Only users with '${status[0]}' status can use this endpoint.`,
       );
 
     return true;
