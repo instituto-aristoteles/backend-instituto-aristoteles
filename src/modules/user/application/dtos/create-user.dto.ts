@@ -38,8 +38,8 @@ export class CreateUserDto {
   @IsString()
   role: UserRole;
 
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  status: UserStatus;
+  status?: UserStatus;
 }
