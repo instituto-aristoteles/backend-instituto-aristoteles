@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -11,6 +11,8 @@ import { DatabaseModule } from '@/database/typeorm/database.module';
 import { HealthModule } from '@/modules/health/health.module';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { UserStatusGuard } from '@/common/guards/user-status.guard';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
@@ -32,6 +34,29 @@ import { UserStatusGuard } from '@/common/guards/user-status.guard';
         JWT_REFRESH_SECRET: Joi.string().required(),
         APP_PORT: Joi.number().default(3000),
       }),
+    }),
+    MailerModule.forRootAsync({
+      useFactory: async (config: ConfigService) => ({
+        template: {
+          dir: process.cwd() + '/templates',
+          adapter: new HandlebarsAdapter(),
+          options: {
+            extName: '.hbs',
+            layoutsDir: process.cwd() + '/templates',
+          },
+        },
+        transport: {
+          service: 'Gmail',
+          host: config.getOrThrow('MAIL_HOST'),
+          port: parseInt(config.getOrThrow('MAIL_PORT')),
+          secure: true,
+          auth: {
+            user: config.getOrThrow('MAIL_USER'),
+            pass: config.getOrThrow('MAIL_PASSWORD'),
+          },
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [],

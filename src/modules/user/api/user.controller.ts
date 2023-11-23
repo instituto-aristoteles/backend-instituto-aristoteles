@@ -30,6 +30,8 @@ import { UserRole } from '@/domain/enums/user-role';
 import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
 import { UserStatusType } from '@/common/decorators/user-status-type.decorator';
 import { UserStatusGuard } from '@/common/guards/user-status.guard';
+import { UpdateUserProfileDto } from '@/modules/user/application/dtos/update-user-profile.dto';
+import { UpdateUserRoleDto } from '@/modules/user/application/dtos/update-user-role.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -54,6 +56,35 @@ export class UserController {
   @ApiBearerAuth()
   public async getUsers(): Promise<UserReadDto[]> {
     return this.userService.getUsers();
+  }
+
+  @Put('me')
+  @UseGuards(UserStatusGuard)
+  @UserStatusType('confirmed')
+  @HttpCode(201)
+  @ApiOperation({
+    summary: 'Atualiza o perfil do usuário',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Perfil atualizado',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar atualizar um usuário sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async updateUserProfile(
+    @CurrentUser() user: Pick<UserEntity, 'id'>,
+    @Body() profile: UpdateUserProfileDto,
+  ) {
+    await this.userService.updateUserProfile(user.id, profile);
   }
 
   @Get('me')
@@ -137,6 +168,34 @@ export class UserController {
     await this.userService.createUser(user);
   }
 
+  @Put(':id')
+  @HttpCode(201)
+  @Roles(UserRole.Admin)
+  @ApiOperation({
+    summary: 'Atualiza o papel(role) do usuário',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Role atualizada',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar atualizar um usuário sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async updateUserRole(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() role: UpdateUserRoleDto,
+  ) {
+    await this.userService.updateUserRole(id, role);
+  }
+
   @Put(':id/activate-user')
   @HttpCode(201)
   @UseGuards(UserStatusGuard)
@@ -165,23 +224,23 @@ export class UserController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async updateUserPassword(
+  public async activateUser(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() oldAndNewPassword: UpdateUserPasswordDto,
   ): Promise<void> {
     await this.userService.activateUser(id, oldAndNewPassword);
   }
 
-  @Put(':id')
-  @HttpCode(201)
+  @Put(':id/update-password')
   @UseGuards(UserStatusGuard)
   @UserStatusType('confirmed')
+  @HttpCode(201)
   @ApiOperation({
     summary: 'Atualiza a senha do usuário',
   })
   @ApiResponse({
     status: 201,
-    description: 'Senha atualizada e usuário ativado com sucesso',
+    description: 'Senha atualizada',
   })
   @ApiResponse({
     status: 401,
@@ -194,7 +253,7 @@ export class UserController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async updatePassword(
+  public async updateUserPassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() oldAndNewPassword: UpdateUserPasswordDto,
   ) {

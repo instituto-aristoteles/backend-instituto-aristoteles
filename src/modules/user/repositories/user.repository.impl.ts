@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from '@/common/exceptions/database.error';
 import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
 import { UserStatus } from '@/domain/enums/user-status';
+import { UserRole } from '@/domain/enums/user-role';
 
 @Injectable()
 export class UserRepository {
@@ -18,9 +19,10 @@ export class UserRepository {
       UserEntity,
       'name' | 'email' | 'username' | 'password' | 'avatar' | 'role'
     >,
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
-      await this.repository.save(entity);
+      const user = await this.repository.save(entity);
+      return user != null;
     } catch (e) {
       if (e.name === 'QueryFailedError') {
         if (e.code == '23505') {
@@ -46,8 +48,15 @@ export class UserRepository {
     return this.repository.find();
   }
 
-  async updateUser(id: string, entity: UserEntity): Promise<void> {
+  async updateProfileUser(
+    id: string,
+    entity: Pick<UserEntity, 'name' | 'email' | 'avatar'>,
+  ) {
     await this.repository.update(id, entity);
+  }
+
+  async updateUserRole(id: string, role: UserRole): Promise<void> {
+    await this.repository.update(id, { role: role });
   }
 
   async getByUsername(usernameOrEmail: string): Promise<UserEntity> {
