@@ -7,10 +7,17 @@ import { UserRepository } from '@/modules/user/repositories/user.repository.impl
 import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
 import { UserNotFoundError } from '@/common/exceptions/user-not-found.error';
 import { InvalidUserPasswordError } from '@/common/exceptions/invalid-user-password.error';
+import { generateRandomPassword } from '@/common/util/string.util';
+import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateUserProfileDto } from '@/modules/user/application/dtos/update-user-profile.dto';
+import { UpdateUserRoleDto } from '@/modules/user/application/dtos/update-user-role.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly mailerService: MailerService,
+  ) {}
 
   public async getUsers(): Promise<UserReadDto[]> {
     const users = await this.userRepository.getUsers();
@@ -42,14 +49,40 @@ export class UserService {
   }
 
   public async createUser(user: CreateUserDto): Promise<void> {
-    await this.userRepository.createUser({
+    const password = generateRandomPassword(25);
+
+    const isCreated = await this.userRepository.createUser({
       name: user.name,
       email: user.email,
       username: user.username,
       role: user.role,
       avatar: !user.avatar ? null : user.avatar,
-      password: await bcrypt.hash(user.password, 10),
+      password: await bcrypt.hash(password, 10),
     });
+
+    if (isCreated) {
+      const mail = {
+        to: user.email,
+        from: '"Instituto Aristoteles" <contato.instituto.aristoteles@gmail.com>',
+        subject: 'Bem vindo ao Instituto Aristóteles!',
+        template: 'user-password',
+        context: {
+          username: user.username,
+          password: password,
+          name: user.name,
+        },
+      };
+
+      await this.mailerService.sendMail(mail);
+    }
+  }
+
+  public async updateUserProfile(id: string, profile: UpdateUserProfileDto) {
+    await this.userRepository.updateProfileUser(id, profile);
+  }
+
+  public async updateUserRole(id: string, userRole: UpdateUserRoleDto) {
+    await this.userRepository.updateUserRole(id, userRole.role);
   }
 
   public async activateUser(
