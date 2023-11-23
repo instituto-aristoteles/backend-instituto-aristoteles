@@ -13,6 +13,7 @@ import { RolesGuard } from '@/common/guards/roles.guard';
 import { UserStatusGuard } from '@/common/guards/user-status.guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       }),
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [],
   providers: [

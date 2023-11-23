@@ -8,15 +8,16 @@ import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-us
 import { UserNotFoundError } from '@/common/exceptions/user-not-found.error';
 import { InvalidUserPasswordError } from '@/common/exceptions/invalid-user-password.error';
 import { generateRandomPassword } from '@/common/util/string.util';
-import { MailerService } from '@nestjs-modules/mailer';
 import { UpdateUserProfileDto } from '@/modules/user/application/dtos/update-user-profile.dto';
 import { UpdateUserRoleDto } from '@/modules/user/application/dtos/update-user-role.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserCreatedEvent } from '@/domain/events/user/user-created.event';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly mailerService: MailerService,
+    private readonly event: EventEmitter2,
   ) {}
 
   public async getUsers(): Promise<UserReadDto[]> {
@@ -51,7 +52,7 @@ export class UserService {
   public async createUser(user: CreateUserDto): Promise<void> {
     const password = generateRandomPassword(25);
 
-    const isCreated = await this.userRepository.createUser({
+    await this.userRepository.createUser({
       name: user.name,
       email: user.email,
       username: user.username,
@@ -60,21 +61,10 @@ export class UserService {
       password: await bcrypt.hash(password, 10),
     });
 
-    if (isCreated) {
-      const mail = {
-        to: user.email,
-        from: '"Instituto Aristoteles" <contato.instituto.aristoteles@gmail.com>',
-        subject: 'Bem vindo ao Instituto Aristóteles!',
-        template: 'user-password',
-        context: {
-          username: user.username,
-          password: password,
-          name: user.name,
-        },
-      };
-
-      await this.mailerService.sendMail(mail);
-    }
+    this.event.emit(
+      'user.created',
+      new UserCreatedEvent(user.name, user.username, password, user.email),
+    );
   }
 
   public async updateUserProfile(id: string, profile: UpdateUserProfileDto) {
