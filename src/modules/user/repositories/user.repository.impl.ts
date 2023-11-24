@@ -19,9 +19,10 @@ export class UserRepository {
       UserEntity,
       'name' | 'email' | 'username' | 'password' | 'avatar' | 'role'
     >,
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
-      await this.repository.save(entity);
+      const user = await this.repository.save(entity);
+      return user != null;
     } catch (e) {
       if (e.name === 'QueryFailedError') {
         if (e.code == '23505') {
