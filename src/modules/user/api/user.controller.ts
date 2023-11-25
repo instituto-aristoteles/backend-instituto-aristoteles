@@ -41,6 +41,7 @@ export class UserController {
 
   @Get()
   @Roles(UserRole.Admin)
+  @UserStatusType('confirmed')
   @HttpCode(200)
   @ApiOperation({ summary: 'Lista todos os usuários' })
   @ApiResponse({
@@ -60,6 +61,7 @@ export class UserController {
 
   @Put('me')
   @UserStatusType('confirmed')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({
     summary: 'Atualiza o perfil do usuário',
@@ -87,6 +89,7 @@ export class UserController {
   }
 
   @Get('me')
+  @Roles(UserRole.Editor, UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({ summary: 'Busca o usuário baseado no token' })
   @ApiResponse({
@@ -119,6 +122,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UserStatusType('confirmed')
   @Roles(UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({ summary: 'Busca um usuário pelo ID' })
@@ -146,6 +150,7 @@ export class UserController {
 
   @Post()
   @Roles(UserRole.Admin)
+  @UserStatusType('confirmed')
   @HttpCode(201)
   @ApiOperation({ summary: 'Cria um usuário' })
   @ApiResponse({
@@ -169,6 +174,7 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(200)
+  @UserStatusType('confirmed')
   @Roles(UserRole.Admin)
   @ApiOperation({
     summary: 'Atualiza o papel(role) do usuário',
@@ -196,6 +202,7 @@ export class UserController {
   }
 
   @Put(':id/reset-password')
+  @UserStatusType('confirmed')
   @HttpCode(200)
   @Roles(UserRole.Admin)
   @ApiOperation({
@@ -223,6 +230,7 @@ export class UserController {
   @Put('me/activate-user')
   @HttpCode(200)
   @UserStatusType('unconfirmed')
+  @Roles(UserRole.Editor, UserRole.Admin)
   @ApiOperation({
     summary:
       'Atualiza a senha e ativa o usuário com status "Não Confirmado" para "Confirmado"',
@@ -257,6 +265,7 @@ export class UserController {
 
   @Put('me/update-password')
   @UserStatusType('confirmed')
+  @Roles(UserRole.Admin, UserRole.Editor)
   @HttpCode(200)
   @ApiOperation({
     summary: 'Atualiza a senha do usuário',
@@ -284,6 +293,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UserStatusType('confirmed')
   @Roles(UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({
