@@ -44,7 +44,9 @@ export class UserRepository {
   }
 
   async getUsers(): Promise<UserEntity[]> {
-    return this.repository.find();
+    return this.repository.find({
+      order: { createdAt: 'desc' },
+    });
   }
 
   async updateProfileUser(
@@ -56,6 +58,10 @@ export class UserRepository {
 
   async updateUserRole(id: string, role: UserRole): Promise<void> {
     await this.repository.update(id, { role: role });
+  }
+
+  async resetUserPassword(id: string, password: string, status: UserStatus) {
+    await this.repository.update(id, { password: password, status: status });
   }
 
   async getByUsername(usernameOrEmail: string): Promise<UserEntity> {

@@ -12,6 +12,7 @@ import { UpdateUserProfileDto } from '@/modules/user/application/dtos/update-use
 import { UpdateUserRoleDto } from '@/modules/user/application/dtos/update-user-role.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserCreatedEvent } from '@/domain/events/user/user-created.event';
+import { ResetUserPasswordEvent } from '@/domain/events/user/reset-user-password.event';
 
 @Injectable()
 export class UserService {
@@ -33,6 +34,13 @@ export class UserService {
         status: u.status,
       };
     });
+  }
+
+  public async deleteUser(id: string): Promise<void> {
+    const user = await this.userRepository.getUser(id);
+    if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
+
+    await this.userRepository.deleteUser(id);
   }
 
   public async getUser(id: string): Promise<UserReadDto> {
@@ -91,6 +99,25 @@ export class UserService {
     const password = await this.getUserPassword(id, oldAndNewPassword);
 
     await this.userRepository.updatePassword(id, password);
+  }
+
+  public async resetUserPassword(id: string) {
+    const password = generateRandomPassword(25);
+    const user = await this.userRepository.getUser(id);
+
+    if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
+    this.event.emit(
+      'reset.user.password',
+      new ResetUserPasswordEvent(user.name, user.email, password),
+    );
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    await this.userRepository.resetUserPassword(
+      id,
+      hashPassword,
+      'unconfirmed',
+    );
   }
 
   private async getUserPassword(

@@ -4,6 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilterMiddleware } from '@/common/middlewares/http-exception-filter.middleware';
 import { RolesGuard } from '@/common/guards/roles.guard';
+import { UserStatusGuard } from '@/common/guards/user-status.guard';
 
 async function bootstrap(): Promise<string> {
   const port = parseInt(process.env.APP_PORT, 10) || 3000;
@@ -39,6 +40,7 @@ async function bootstrap(): Promise<string> {
 
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new RolesGuard(reflector));
+  app.useGlobalGuards(new UserStatusGuard(reflector));
 
   app.enableCors();
   await app.listen(port);
