@@ -9,7 +9,6 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '@/modules/user/application/services/user.service';
 import { CreateUserDto } from '../application/dtos/create-user.dto';
@@ -31,7 +30,6 @@ import { Roles } from '@/common/decorators/user-role.decorator';
 import { UserRole } from '@/domain/enums/user-role';
 import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
 import { UserStatusType } from '@/common/decorators/user-status-type.decorator';
-import { UserStatusGuard } from '@/common/guards/user-status.guard';
 import { UpdateUserProfileDto } from '@/modules/user/application/dtos/update-user-profile.dto';
 import { UpdateUserRoleDto } from '@/modules/user/application/dtos/update-user-role.dto';
 
@@ -61,7 +59,6 @@ export class UserController {
   }
 
   @Put('me')
-  @UseGuards(UserStatusGuard)
   @UserStatusType('confirmed')
   @HttpCode(200)
   @ApiOperation({
