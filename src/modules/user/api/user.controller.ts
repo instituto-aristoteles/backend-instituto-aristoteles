@@ -1,13 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
   ParseUUIDPipe,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '@/modules/user/application/services/user.service';
 import { CreateUserDto } from '../application/dtos/create-user.dto';
@@ -29,7 +30,6 @@ import { Roles } from '@/common/decorators/user-role.decorator';
 import { UserRole } from '@/domain/enums/user-role';
 import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
 import { UserStatusType } from '@/common/decorators/user-status-type.decorator';
-import { UserStatusGuard } from '@/common/guards/user-status.guard';
 import { UpdateUserProfileDto } from '@/modules/user/application/dtos/update-user-profile.dto';
 import { UpdateUserRoleDto } from '@/modules/user/application/dtos/update-user-role.dto';
 
@@ -41,6 +41,7 @@ export class UserController {
 
   @Get()
   @Roles(UserRole.Admin)
+  @UserStatusType('confirmed')
   @HttpCode(200)
   @ApiOperation({ summary: 'Lista todos os usuários' })
   @ApiResponse({
@@ -59,14 +60,14 @@ export class UserController {
   }
 
   @Put('me')
-  @UseGuards(UserStatusGuard)
   @UserStatusType('confirmed')
-  @HttpCode(201)
+  @Roles(UserRole.Admin, UserRole.Editor)
+  @HttpCode(200)
   @ApiOperation({
     summary: 'Atualiza o perfil do usuário',
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'Perfil atualizado',
   })
   @ApiResponse({
@@ -88,6 +89,7 @@ export class UserController {
   }
 
   @Get('me')
+  @Roles(UserRole.Editor, UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({ summary: 'Busca o usuário baseado no token' })
   @ApiResponse({
@@ -120,6 +122,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UserStatusType('confirmed')
   @Roles(UserRole.Admin)
   @HttpCode(200)
   @ApiOperation({ summary: 'Busca um usuário pelo ID' })
@@ -147,6 +150,7 @@ export class UserController {
 
   @Post()
   @Roles(UserRole.Admin)
+  @UserStatusType('confirmed')
   @HttpCode(201)
   @ApiOperation({ summary: 'Cria um usuário' })
   @ApiResponse({
@@ -169,13 +173,14 @@ export class UserController {
   }
 
   @Put(':id')
-  @HttpCode(201)
+  @HttpCode(200)
+  @UserStatusType('confirmed')
   @Roles(UserRole.Admin)
   @ApiOperation({
     summary: 'Atualiza o papel(role) do usuário',
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'Role atualizada',
   })
   @ApiResponse({
@@ -196,15 +201,42 @@ export class UserController {
     await this.userService.updateUserRole(id, role);
   }
 
-  @Put(':id/activate-user')
-  @HttpCode(201)
-  @UseGuards(UserStatusGuard)
-  @UserStatusType('unconfirmed')
+  @Put(':id/reset-password')
+  @UserStatusType('confirmed')
+  @HttpCode(200)
+  @Roles(UserRole.Admin)
   @ApiOperation({
-    summary: 'Atualiza a senha e ativa o usuário com status "Não Confirmado"',
+    summary: 'Reseta a senha do usuário e retorna o status para Não Confirmado',
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
+    description: 'Senha resetada',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar atualizar um usuário sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async resetUserPassword(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.userService.resetUserPassword(id);
+  }
+
+  @Put('me/activate-user')
+  @HttpCode(200)
+  @UserStatusType('unconfirmed')
+  @Roles(UserRole.Editor, UserRole.Admin)
+  @ApiOperation({
+    summary:
+      'Atualiza a senha e ativa o usuário com status "Não Confirmado" para "Confirmado"',
+  })
+  @ApiResponse({
+    status: 200,
     description: 'Senha atualizada e usuário ativado com sucesso',
   })
   @ApiResponse({
@@ -225,21 +257,21 @@ export class UserController {
   })
   @ApiBearerAuth()
   public async activateUser(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: Pick<UserEntity, 'id'>,
     @Body() oldAndNewPassword: UpdateUserPasswordDto,
   ): Promise<void> {
-    await this.userService.activateUser(id, oldAndNewPassword);
+    await this.userService.activateUser(user.id, oldAndNewPassword);
   }
 
-  @Put(':id/update-password')
-  @UseGuards(UserStatusGuard)
+  @Put('me/update-password')
   @UserStatusType('confirmed')
-  @HttpCode(201)
+  @Roles(UserRole.Admin, UserRole.Editor)
+  @HttpCode(200)
   @ApiOperation({
     summary: 'Atualiza a senha do usuário',
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'Senha atualizada',
   })
   @ApiResponse({
@@ -254,9 +286,41 @@ export class UserController {
   })
   @ApiBearerAuth()
   public async updateUserPassword(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: Pick<UserEntity, 'id'>,
     @Body() oldAndNewPassword: UpdateUserPasswordDto,
   ) {
-    await this.userService.updateUserPassword(id, oldAndNewPassword);
+    await this.userService.updateUserPassword(user.id, oldAndNewPassword);
+  }
+
+  @Delete(':id')
+  @UserStatusType('confirmed')
+  @Roles(UserRole.Admin)
+  @HttpCode(200)
+  @ApiOperation({
+    summary: 'Remove um usuário',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário removido',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar fazer uma requisição sem estar logado.',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Somente usuários com o papel de Admin podem fazer essa requisição',
+    type: ForbiddenException,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.userService.deleteUser(id);
   }
 }
