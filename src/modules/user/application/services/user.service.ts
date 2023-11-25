@@ -106,17 +106,17 @@ export class UserService {
     const user = await this.userRepository.getUser(id);
 
     if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
-    this.event.emit(
-      'reset.user.password',
-      new ResetUserPasswordEvent(user.name, user.email, password),
-    );
-
     const hashPassword = await bcrypt.hash(password, 10);
 
     await this.userRepository.resetUserPassword(
       id,
       hashPassword,
       'unconfirmed',
+    );
+
+    this.event.emit(
+      'reset.user.password',
+      new ResetUserPasswordEvent(user.name, user.email, password),
     );
   }
 
