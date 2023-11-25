@@ -102,10 +102,11 @@ export class UserService {
   }
 
   public async resetUserPassword(id: string) {
-    const password = generateRandomPassword(25);
     const user = await this.userRepository.getUser(id);
 
     if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
+
+    const password = generateRandomPassword(25);
     const hashPassword = await bcrypt.hash(password, 10);
 
     await this.userRepository.resetUserPassword(
