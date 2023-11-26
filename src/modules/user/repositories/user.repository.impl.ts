@@ -4,8 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseError } from '@/common/exceptions/database.error';
 import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
-import { UserStatus } from '@/domain/enums/user-status';
-import { UserRole } from '@/domain/enums/user-role';
 
 @Injectable()
 export class UserRepository {
@@ -49,19 +47,8 @@ export class UserRepository {
     });
   }
 
-  async updateProfileUser(
-    id: string,
-    entity: Pick<UserEntity, 'name' | 'email' | 'avatar'>,
-  ) {
+  async updateUser(id: string, entity: UserEntity) {
     await this.repository.update(id, entity);
-  }
-
-  async updateUserRole(id: string, role: UserRole): Promise<void> {
-    await this.repository.update(id, { role: role });
-  }
-
-  async resetUserPassword(id: string, password: string, status: UserStatus) {
-    await this.repository.update(id, { password: password, status: status });
   }
 
   async getByUsername(usernameOrEmail: string): Promise<UserEntity> {
@@ -72,17 +59,5 @@ export class UserRepository {
 
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {
     await this.repository.update(id, { refreshToken: refreshToken });
-  }
-
-  async activateUser(
-    id: string,
-    password: string,
-    status: UserStatus,
-  ): Promise<void> {
-    await this.repository.update(id, { password: password, status: status });
-  }
-
-  async updatePassword(id: string, password: string) {
-    await this.repository.update(id, { password: password });
   }
 }

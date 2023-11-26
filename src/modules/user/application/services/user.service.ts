@@ -37,8 +37,7 @@ export class UserService {
   }
 
   public async deleteUser(id: string): Promise<void> {
-    const user = await this.userRepository.getUser(id);
-    if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
+    await this.validateUser(id);
 
     await this.userRepository.deleteUser(id);
   }
@@ -76,44 +75,59 @@ export class UserService {
   }
 
   public async updateUserProfile(id: string, profile: UpdateUserProfileDto) {
-    await this.userRepository.updateProfileUser(id, profile);
+    const user = await this.validateUser(id);
+
+    user.name = profile.name;
+    user.email = profile.email;
+    user.avatar = profile.avatar;
+
+    await this.userRepository.updateUser(id, user);
   }
 
   public async updateUserRole(id: string, userRole: UpdateUserRoleDto) {
-    await this.userRepository.updateUserRole(id, userRole.role);
+    const user = await this.validateUser(id);
+
+    user.role = userRole.role;
+
+    await this.userRepository.updateUser(id, user);
   }
 
   public async activateUser(
     id: string,
     oldAndNewPassword: UpdateUserPasswordDto,
   ): Promise<void> {
-    const password = await this.getUserPassword(id, oldAndNewPassword);
+    const user = await this.validateUser(id);
+    user.password = await this.validatePassword(
+      user.password,
+      oldAndNewPassword,
+    );
+    user.status = 'confirmed';
 
-    await this.userRepository.activateUser(id, password, 'confirmed');
+    await this.userRepository.updateUser(id, user);
   }
 
   public async updateUserPassword(
     id: string,
     oldAndNewPassword: UpdateUserPasswordDto,
   ) {
-    const password = await this.getUserPassword(id, oldAndNewPassword);
+    const user = await this.validateUser(id);
 
-    await this.userRepository.updatePassword(id, password);
+    user.password = await this.validatePassword(
+      user.password,
+      oldAndNewPassword,
+    );
+
+    await this.userRepository.updateUser(id, user);
   }
 
   public async resetUserPassword(id: string) {
-    const user = await this.userRepository.getUser(id);
-
-    if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
-
+    const user = await this.validateUser(id);
     const password = generateRandomPassword(25);
-    const hashPassword = await bcrypt.hash(password, 10);
 
-    await this.userRepository.resetUserPassword(
-      id,
-      hashPassword,
-      'unconfirmed',
-    );
+    user.password = await bcrypt.hash(password, 10);
+    user.status = 'unconfirmed';
+
+    await this.userRepository.updateUser(id, user);
 
     this.event.emit(
       'reset.user.password',
@@ -121,16 +135,21 @@ export class UserService {
     );
   }
 
-  private async getUserPassword(
-    id: string,
+  private async validateUser(id: string) {
+    const user = await this.userRepository.getUser(id);
+
+    if (!user) throw new UserNotFoundError(`User not found with id #${id}`);
+
+    return user;
+  }
+
+  private async validatePassword(
+    password: string,
     oldAndNewPassword: UpdateUserPasswordDto,
   ) {
-    const user = await this.userRepository.getUser(id);
-    if (!user) throw new UserNotFoundError(`User not found with id ${id}`);
-
     const isValidPassword = await bcrypt.compare(
       oldAndNewPassword.oldPassword,
-      user.password,
+      password,
     );
 
     if (!isValidPassword)

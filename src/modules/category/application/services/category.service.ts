@@ -12,21 +12,21 @@ export class CategoryService {
   constructor(private readonly repository: CategoryRepository) {}
 
   public async createCategory(category: CreateCategoryDto): Promise<void> {
-    await this.repository.createCategory({
+    await this.repository.create({
       title: category.title,
       slug: slugify(category.title, { lower: true }),
     });
   }
 
   public async deleteCategory(id: string): Promise<void> {
-    const category = await this.repository.getCategory(id);
+    const category = await this.repository.findOne(id);
     if (!category) throw new CategoryNotFoundError('Category not found.');
 
-    await this.repository.deleteCategory(id);
+    await this.repository.delete(id);
   }
 
   public async getCategories(): Promise<ReadCategoryDto[]> {
-    const categories = await this.repository.getCategories();
+    const categories = await this.repository.findAll();
     return categories.map((c) => {
       return {
         id: c.id,
@@ -39,7 +39,7 @@ export class CategoryService {
   }
 
   public async getCategory(id: string): Promise<ReadCategoryDto> {
-    const category = await this.repository.getCategory(id);
+    const category = await this.repository.findOne(id);
     if (!category) throw new CategoryNotFoundError('Category not found');
 
     return {
@@ -55,10 +55,10 @@ export class CategoryService {
     id: string,
     entity: UpdateCategoryDto,
   ): Promise<void> {
-    const category = await this.repository.getCategory(id);
+    const category = await this.repository.findOne(id);
     if (!category) throw new CategoryNotFoundError('Category not found.');
 
-    await this.repository.updateCategory(id, {
+    await this.repository.update(id, {
       title: entity.title,
       slug: slugify(entity.title, { lower: true }),
       createdAt: undefined,
@@ -66,6 +66,6 @@ export class CategoryService {
   }
 
   public async bulkDeleteCategory(categoryIds: BulkDeleteCategoryDto) {
-    await this.repository.bulkDeleteCategory(categoryIds.ids);
+    await this.repository.bulkDelete(categoryIds.ids);
   }
 }

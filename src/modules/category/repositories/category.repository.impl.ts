@@ -11,7 +11,7 @@ export class CategoryRepository {
     @InjectRepository(CategoryEntity)
     private readonly repository: Repository<CategoryEntity>,
   ) {}
-  public async createCategory(
+  public async create(
     entity: Omit<CategoryEntity, 'createdAt'>,
   ): Promise<void> {
     try {
@@ -29,11 +29,11 @@ export class CategoryRepository {
     }
   }
 
-  public async deleteCategory(id: string): Promise<void> {
+  public async delete(id: string): Promise<void> {
     await this.repository.delete(id);
   }
 
-  public async getCategories(): Promise<CategoryEntity[]> {
+  public async findAll(): Promise<CategoryEntity[]> {
     return this.repository.find({
       order: {
         createdAt: 'DESC',
@@ -41,7 +41,7 @@ export class CategoryRepository {
     });
   }
 
-  public async getCategory(id: string): Promise<CategoryEntity> {
+  public async findOne(id: string): Promise<CategoryEntity> {
     return this.repository.findOne({
       where: {
         id: id,
@@ -49,14 +49,11 @@ export class CategoryRepository {
     });
   }
 
-  public async updateCategory(
-    id: string,
-    entity: CategoryEntity,
-  ): Promise<void> {
+  public async update(id: string, entity: CategoryEntity): Promise<void> {
     await this.repository.update(id, entity);
   }
 
-  public async bulkDeleteCategory(ids: string[]) {
+  public async bulkDelete(ids: string[]) {
     await this.repository.delete({ id: In(ids) });
   }
 }

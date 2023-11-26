@@ -8,7 +8,6 @@ import {
 } from '@/modules/post/util/post-converter';
 import { UnprocessableEntityError } from '@/common/exceptions/unprocessable-entity.error';
 import { PostRepository } from '@/modules/post/repositories/post.repository';
-import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { CategoryRepository } from '@/modules/category/repositories/category.repository.impl';
 import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.filters.dto';
 import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
@@ -19,7 +18,6 @@ import { PostNotFoundError } from '@/common/exceptions/post-not-found.error';
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
-    private readonly userRepository: UserRepository,
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
@@ -48,9 +46,7 @@ export class PostService {
     user: UserEntity,
   ): Promise<void> {
     if (post.categoryId) {
-      const category = await this.categoryRepository.getCategory(
-        post.categoryId,
-      );
+      const category = await this.categoryRepository.findOne(post.categoryId);
 
       if (!category) {
         throw new UnprocessableEntityError(
@@ -74,9 +70,7 @@ export class PostService {
     }
 
     if (post.categoryId) {
-      const category = await this.categoryRepository.getCategory(
-        post.categoryId,
-      );
+      const category = await this.categoryRepository.findOne(post.categoryId);
 
       if (!category) {
         throw new UnprocessableEntityError(
