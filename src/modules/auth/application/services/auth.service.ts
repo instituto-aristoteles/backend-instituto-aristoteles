@@ -31,7 +31,9 @@ export class AuthService {
     username: string,
     password: string,
   ): Promise<Omit<UserEntity, 'postsUpdated' | 'postsCreated' | 'password'>> {
-    const user = await this.userRepository.getByUsername(username);
+    const user = await this.userRepository.findByCondition({
+      where: [{ username: username }, { email: username }],
+    });
 
     if (user) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -80,7 +82,10 @@ export class AuthService {
         'User not found or refresh token is invalid.',
       );
 
-    const user = await this.userRepository.getByUsername(username);
+    const user = await this.userRepository.findByCondition({
+      where: [{ username: username }, { email: username }],
+    });
+
     if (!user) throw new UserNotFoundError('User not found');
 
     return user;
@@ -100,7 +105,7 @@ export class AuthService {
     refreshToken: string,
   ): Promise<void> {
     const hash = await bcrypt.hash(refreshToken, 10);
-    await this.userRepository.updateRefreshToken(id, hash);
+    await this.userRepository.update(id, { refreshToken: hash });
   }
 
   private async getTokens(user: UserEntity): Promise<UserTokenWithRefresh> {

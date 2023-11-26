@@ -24,7 +24,18 @@ export class PostService {
   public async getPosts(
     filters: GetPostsFiltersDto,
   ): Promise<PaginatedResponse<PostReadDTO>> {
-    const posts = await this.postRepository.getPosts(filters);
+    const take = filters.pageSize;
+    const skip = take * (filters.page - 1);
+
+    const posts = await this.postRepository.findAll({
+      relations: ['createdBy', 'updatedBy', 'category'],
+      skip: skip,
+      take: take,
+      where: {
+        status: filters.status,
+      },
+      order: { createdAt: 'desc' },
+    });
 
     return {
       currentPage: filters.page,
@@ -34,7 +45,10 @@ export class PostService {
   }
 
   public async findPost(id: string): Promise<PostReadDTO> {
-    const post = await this.postRepository.findPost(id);
+    const post = await this.postRepository.findByCondition({
+      where: [{ id: id }, { slug: id }],
+      relations: ['createdBy', 'updatedBy', 'category'],
+    });
 
     if (!post) throw new PostNotFoundError(`Post ${id} not found`);
 
@@ -46,7 +60,9 @@ export class PostService {
     user: UserEntity,
   ): Promise<void> {
     if (post.categoryId) {
-      const category = await this.categoryRepository.findOne(post.categoryId);
+      const category = await this.categoryRepository.findOneById(
+        post.categoryId,
+      );
 
       if (!category) {
         throw new UnprocessableEntityError(
@@ -56,7 +72,7 @@ export class PostService {
       }
     }
 
-    await this.postRepository.createPost(dtoToModel(post, user));
+    await this.postRepository.save(dtoToModel(post, user));
   }
 
   public async updatePost(
@@ -64,13 +80,18 @@ export class PostService {
     post: PostCreateUpdateDTO,
     user: UserEntity,
   ): Promise<void> {
-    const postEntity = await this.postRepository.findPost(id);
+    const postEntity = await this.postRepository.findByCondition({
+      where: [{ id: id }, { slug: id }],
+      relations: ['createdBy', 'updatedBy', 'category'],
+    });
     if (!postEntity) {
       throw new PostNotFoundError('Post not found.');
     }
 
     if (post.categoryId) {
-      const category = await this.categoryRepository.findOne(post.categoryId);
+      const category = await this.categoryRepository.findOneById(
+        post.categoryId,
+      );
 
       if (!category) {
         throw new UnprocessableEntityError(
@@ -80,16 +101,16 @@ export class PostService {
       }
     }
 
-    await this.postRepository.updatePost(dtoToModel(post, user, postEntity));
+    await this.postRepository.update(id, dtoToModel(post, user, postEntity));
   }
 
   public async deletePost(id: string): Promise<void> {
-    const postEntity = await this.postRepository.findPost(id);
+    const postEntity = await this.postRepository.findOneById(id);
 
     if (!postEntity) {
       throw new PostNotFoundError('Post not found.');
     }
 
-    await this.postRepository.deletePost(postEntity.id);
+    await this.postRepository.remove(postEntity.id);
   }
 }
