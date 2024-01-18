@@ -37,10 +37,17 @@ export class PostService {
       order: { createdAt: 'desc' },
     });
 
+    const postsCount = await this.postRepository.count({
+      where: {
+        status: filters.status,
+      },
+    });
+
     return {
       currentPage: filters.page,
       pageSize: filters.pageSize,
       results: modelToDtoList(posts),
+      totalSize: postsCount,
     };
   }
 

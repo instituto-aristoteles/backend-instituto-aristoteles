@@ -20,6 +20,9 @@ export class PostReadDTO {
   content: string;
 
   @ApiProperty()
+  coverUrl?: string;
+
+  @ApiProperty()
   status: PostStatus;
 
   @ApiProperty()

@@ -40,6 +40,10 @@ export abstract class RepositoryBase<T extends EntityBase<T>> {
     return await this.repository.find(options);
   }
 
+  public async count(options?: FindManyOptions<T>): Promise<number> {
+    return await this.repository.count(options);
+  }
+
   public async findOneById(id: any): Promise<T> {
     const options: FindOptionsWhere<T> = {
       id: id,

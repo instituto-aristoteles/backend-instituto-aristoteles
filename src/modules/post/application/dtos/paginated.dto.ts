@@ -9,4 +9,7 @@ export class PaginatedResponse<T> {
 
   @ApiProperty()
   pageSize: number;
+
+  @ApiProperty()
+  totalSize: number;
 }
