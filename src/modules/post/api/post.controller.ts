@@ -30,6 +30,7 @@ import { UserEntity } from '@/domain/entities/user.entity';
 import { Roles } from '@/common/decorators/user-role.decorator';
 import { UserRole } from '@/domain/enums/user-role';
 import { UserStatusType } from '@/common/decorators/user-status-type.decorator';
+import { BulkDeleteCategoryDto } from '@/modules/category/application/dtos/bulk-delete-category.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -144,5 +145,29 @@ export class PostController {
   @ApiBearerAuth()
   public async deletePost(@Param('id', new ParseUUIDPipe()) id: string) {
     await this.postService.deletePost(id);
+  }
+
+  @Delete('bulk-delete')
+  @UserStatusType('confirmed')
+  @Roles(UserRole.Admin, UserRole.Editor)
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Remove uma lista de artigos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista removida com sucesso',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar remover um artigo sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async bulkDeleteCategory(@Body() ids: BulkDeleteCategoryDto) {
+    await this.postService.bulkDeletePosts(ids);
   }
 }
