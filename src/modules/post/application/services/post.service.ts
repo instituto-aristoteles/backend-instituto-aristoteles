@@ -13,6 +13,7 @@ import { GetPostsFiltersDto } from '@/modules/post/application/dtos/get-posts.fi
 import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto';
 import { UserEntity } from '@/domain/entities/user.entity';
 import { PostNotFoundError } from '@/common/exceptions/post-not-found.error';
+import { BulkDeletePostDto } from '@/modules/post/application/dtos/bulk-delete-post.dto';
 
 @Injectable()
 export class PostService {
@@ -119,5 +120,9 @@ export class PostService {
     }
 
     await this.postRepository.remove(postEntity.id);
+  }
+
+  async bulkDeletePosts(postIds: BulkDeletePostDto) {
+    await this.postRepository.deleteMany(postIds.ids);
   }
 }

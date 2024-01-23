@@ -32,10 +32,6 @@ export abstract class RepositoryBase<T extends EntityBase<T>> {
     }
   }
 
-  public async saveMany(data: DeepPartial<T>[]): Promise<void> {
-    await this.repository.save(data);
-  }
-
   public async findAll(options?: FindManyOptions<T>): Promise<T[]> {
     return await this.repository.find(options);
   }
