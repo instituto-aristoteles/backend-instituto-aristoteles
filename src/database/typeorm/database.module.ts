@@ -16,7 +16,7 @@ import { PostEntity } from '@/domain/entities/post.entity';
         password: config.getOrThrow('DATABASE_PASSWORD'),
         database: config.getOrThrow('DATABASE_NAME'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         entities: [UserEntity, CategoryEntity, PostEntity],
         ssl: {
           rejectUnauthorized: false,
