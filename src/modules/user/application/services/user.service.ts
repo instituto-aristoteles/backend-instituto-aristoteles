@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserReadDto } from '../dtos/user.read.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
 
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { UserRepository } from '@/modules/user/repositories/user.repository.impl';
 import { UpdateUserPasswordDto } from '@/modules/user/application/dtos/update-user-password.dto';
 import { UserNotFoundError } from '@/common/exceptions/user-not-found.error';
