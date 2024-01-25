@@ -30,7 +30,7 @@ import { UserEntity } from '@/domain/entities/user.entity';
 import { Roles } from '@/common/decorators/user-role.decorator';
 import { UserRole } from '@/domain/enums/user-role';
 import { UserStatusType } from '@/common/decorators/user-status-type.decorator';
-import { BulkDeleteCategoryDto } from '@/modules/category/application/dtos/bulk-delete-category.dto';
+import { BulkDeletePostDto } from '@/modules/post/application/dtos/bulk-delete-post.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -167,7 +167,7 @@ export class PostController {
     type: BadRequestSwagger,
   })
   @ApiBearerAuth()
-  public async bulkDeleteCategory(@Body() ids: BulkDeleteCategoryDto) {
+  public async bulkDeletePosts(@Body() ids: BulkDeletePostDto) {
     await this.postService.bulkDeletePosts(ids);
   }
 }
