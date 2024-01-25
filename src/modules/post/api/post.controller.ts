@@ -123,30 +123,6 @@ export class PostController {
     await this.postService.updatePost(id, post, user);
   }
 
-  @Delete(':id')
-  @UserStatusType('confirmed')
-  @Roles(UserRole.Admin, UserRole.Editor)
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Remove um artigo' })
-  @ApiResponse({
-    status: 200,
-    description: 'Artigo removido com sucesso',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Ocorre ao tentar criar um artigo sem estar logado',
-    type: UnauthorizedSwagger,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
-    type: BadRequestSwagger,
-  })
-  @ApiBearerAuth()
-  public async deletePost(@Param('id', new ParseUUIDPipe()) id: string) {
-    await this.postService.deletePost(id);
-  }
-
   @Delete('bulk-delete')
   @UserStatusType('confirmed')
   @Roles(UserRole.Admin, UserRole.Editor)
@@ -169,5 +145,29 @@ export class PostController {
   @ApiBearerAuth()
   public async bulkDeletePosts(@Body() ids: BulkDeletePostDto) {
     await this.postService.bulkDeletePosts(ids);
+  }
+
+  @Delete(':id')
+  @UserStatusType('confirmed')
+  @Roles(UserRole.Admin, UserRole.Editor)
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Remove um artigo' })
+  @ApiResponse({
+    status: 200,
+    description: 'Artigo removido com sucesso',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Ocorre ao tentar criar um artigo sem estar logado',
+    type: UnauthorizedSwagger,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorre ao enviar uma solicitação incorreta para o servidor',
+    type: BadRequestSwagger,
+  })
+  @ApiBearerAuth()
+  public async deletePost(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.postService.deletePost(id);
   }
 }

@@ -122,7 +122,7 @@ export class PostService {
     await this.postRepository.remove(postEntity.id);
   }
 
-  async bulkDeletePosts(postIds: BulkDeletePostDto) {
+  public async bulkDeletePosts(postIds: BulkDeletePostDto) {
     await this.postRepository.deleteMany(postIds.ids);
   }
 }
