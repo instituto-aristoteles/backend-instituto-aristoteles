@@ -26,10 +26,10 @@ export class PostReadDTO {
   status: PostStatus;
 
   @ApiProperty()
-  createdBy: Pick<UserReadDto, 'id' | 'name' | 'email'>;
+  createdBy: Pick<UserReadDto, 'id' | 'name' | 'email' | 'avatar'>;
 
   @ApiProperty()
-  updatedBy?: Pick<UserReadDto, 'id' | 'name' | 'email'>;
+  updatedBy?: Pick<UserReadDto, 'id' | 'name' | 'email' | 'avatar'>;
 
   @ApiProperty()
   category?: ReadCategoryDto;

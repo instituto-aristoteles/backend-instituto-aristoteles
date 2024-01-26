@@ -14,6 +14,7 @@ import { PaginatedResponse } from '@/modules/post/application/dtos/paginated.dto
 import { UserEntity } from '@/domain/entities/user.entity';
 import { PostNotFoundError } from '@/common/exceptions/post-not-found.error';
 import { BulkDeletePostDto } from '@/modules/post/application/dtos/bulk-delete-post.dto';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class PostService {
@@ -54,7 +55,7 @@ export class PostService {
 
   public async findPost(id: string): Promise<PostReadDTO> {
     const post = await this.postRepository.findByCondition({
-      where: [{ id: id }, { slug: id }],
+      where: !isUUID(id) ? { slug: id } : { id },
       relations: ['createdBy', 'updatedBy', 'category'],
     });
 

@@ -64,7 +64,7 @@ export class PostController {
     description: 'Artigo não encontrado pelo ID',
     type: NotFoundSwagger,
   })
-  public async getPost(@Param('id', new ParseUUIDPipe()) id: string) {
+  public async getPost(@Param('id') id: string) {
     return await this.postService.findPost(id);
   }
 
