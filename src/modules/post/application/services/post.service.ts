@@ -67,7 +67,7 @@ export class PostService {
   public async createPost(
     post: PostCreateUpdateDTO,
     user: UserEntity,
-  ): Promise<void> {
+  ): Promise<PostReadDTO> {
     if (post.categoryId) {
       const category = await this.categoryRepository.findOneById(
         post.categoryId,
@@ -81,7 +81,8 @@ export class PostService {
       }
     }
 
-    await this.postRepository.save(dtoToModel(post, user));
+    const created = await this.postRepository.save(dtoToModel(post, user));
+    return modelToDTO(created);
   }
 
   public async updatePost(

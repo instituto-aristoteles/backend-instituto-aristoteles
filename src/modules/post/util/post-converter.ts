@@ -14,16 +14,20 @@ export function modelToDTO(entity: PostEntity): PostReadDTO {
     category: entity.category,
     coverUrl: entity.coverUrl,
     slug: entity.slug,
-    createdBy: {
-      id: entity.createdBy.id,
-      avatar: entity.createdBy.avatar,
-      name: entity.createdBy.name,
-      email: entity.createdBy.email,
-    },
-    updatedBy: {
-      name: entity.updatedBy.name,
-      email: entity.updatedBy.email,
-    },
+    createdBy: entity.createdBy
+      ? {
+          id: entity.createdBy.id,
+          avatar: entity.createdBy.avatar,
+          name: entity.createdBy.name,
+          email: entity.createdBy.email,
+        }
+      : null,
+    updatedBy: entity.updatedBy
+      ? {
+          name: entity.updatedBy.name,
+          email: entity.updatedBy.email,
+        }
+      : null,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
   };

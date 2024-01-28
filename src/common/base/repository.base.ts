@@ -3,7 +3,6 @@ import {
   DeepPartial,
   FindManyOptions,
   FindOneOptions,
-  FindOptionsWhere,
   Repository,
 } from 'typeorm';
 import { DuplicatedKeyError } from '@/common/exceptions/duplicated-key.error';
@@ -16,9 +15,10 @@ export abstract class RepositoryBase<T extends EntityBase<T>> {
     this.repository = repository;
   }
 
-  public async save(data: DeepPartial<T>): Promise<void> {
+  public async save(data: DeepPartial<T>): Promise<T> {
     try {
-      await this.repository.save(data);
+      const result = await this.repository.save(data);
+      return await this.findOneById(result.id);
     } catch (e) {
       if (e.name === 'QueryFailedError') {
         if (e.code == '23505') {
@@ -41,11 +41,7 @@ export abstract class RepositoryBase<T extends EntityBase<T>> {
   }
 
   public async findOneById(id: any): Promise<T> {
-    const options: FindOptionsWhere<T> = {
-      id: id,
-    };
-
-    return await this.repository.findOneBy(options);
+    return await this.repository.findOneBy({ id });
   }
 
   public async update(

@@ -92,7 +92,7 @@ export class PostController {
     @Body() post: PostCreateUpdateDTO,
     @CurrentUser() user: UserEntity,
   ) {
-    await this.postService.createPost(post, user);
+    return await this.postService.createPost(post, user);
   }
 
   @Put(':id')
